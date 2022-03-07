@@ -4,12 +4,17 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/vec3.hpp>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "load_shaders.h"
 
 #define WIDTH 800
 #define HEIGHT 600
+
+#define TO_RADIANS(x) (x * 3.14159265f / 180.0f)
 
 enum VAO_IDS {
     TRIANGLES,
@@ -18,6 +23,7 @@ enum VAO_IDS {
 
 enum BUFFER_IDS {
     ARRAY_BUFFER,
+    INDEX_BUFFER,
     NUM_BUFFERS
 };
 
@@ -32,7 +38,7 @@ enum SHADER_IDS {
 };
 
 enum UNIFORM_IDS {
-    X_MOVE,
+    MODEL,
     NUM_UNIFORMS
 };
 
@@ -42,31 +48,50 @@ GLuint buffers[NUM_BUFFERS];
 GLuint shaders[NUM_SHADERS];
 GLuint uniforms[NUM_UNIFORMS];
 
+// for moving triangle
+float x_offset = 0;
+float dx = 0.01;
+
 // setup data and shaders for opengl draw calls
 void init()
 {
     // triangle data
     GLfloat vertices[] = {
         -1.0f, -1.0f,  0.0f,
+        0.0f,  -1.0f, 1.0f,
         1.0f, -1.0f,  0.0f,
         0.0f,  1.0f,  0.0f
+    };
+
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2
     };
 
     // allocate vaos
     glGenVertexArrays(NUM_VAOS, vaos);
     glBindVertexArray(vaos[TRIANGLES]);
 
-    // allocate vbos and load data
+    // allocate buffers
     glGenBuffers(NUM_BUFFERS,buffers);
+
+    // vertices
     glBindBuffer(GL_ARRAY_BUFFER, buffers[ARRAY_BUFFER]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // define vertex attributes
     glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(V_POSITION);
 
-    // unbind vao and vbo - good practice
+    // unbind vao and buffers - good practice
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     // load shaders
@@ -79,7 +104,7 @@ void init()
     glUseProgram(shaders[FILL_RED]);
 
     // setup uniforms
-    uniforms[X_MOVE] = glGetUniformLocation(shaders[FILL_RED], "x_move");
+    uniforms[MODEL] = glGetUniformLocation(shaders[FILL_RED], "model");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
@@ -90,9 +115,17 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // move triangle
+    // x_offset += dx;
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
+    model = glm::rotate(model, TO_RADIANS(75), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(uniforms[MODEL], 1, GL_FALSE, glm::value_ptr(model));
+
     // draw triangle
     glBindVertexArray(vaos[TRIANGLES]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -122,6 +155,11 @@ int main(int argc, char *argv[])
 
     glfwMakeContextCurrent(window);
 
+    int nx;
+    int ny;
+    glfwGetFramebufferSize(window, &nx, &ny);
+    glViewport(0, 0, nx, ny);
+
     // init glew
     if(glewInit() != GLEW_OK) {
         printf("could not init glew\n");
@@ -132,22 +170,17 @@ int main(int argc, char *argv[])
 
     init();
 
-    // for moving triangle
-    float x_offset = 0;
-    float dx = 0.01;
-
     // main loop
     while(!glfwWindowShouldClose(window)) {
-        // move triangle
-        x_offset += dx;
-        glUniform1f(uniforms[X_MOVE], x_offset);
-
         display();
         glfwSwapBuffers(window);
         glfwPollEvents();
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, 1);
+        }
     }
 
-    // TODO free resources
+    glfwTerminate();
 
     return 0;
 }

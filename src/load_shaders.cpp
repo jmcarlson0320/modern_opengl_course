@@ -33,6 +33,7 @@ GLuint load_shaders(shader_info *shaders)
         glGetShaderiv(cur->shader, GL_COMPILE_STATUS, &success);
         if (!success) {
             // print error and return
+            printf("error compiling shader\n");
             return 0;
         }
 
