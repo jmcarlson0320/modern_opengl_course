@@ -39,6 +39,7 @@ enum SHADER_IDS {
 
 enum UNIFORM_IDS {
     MODEL,
+    PROJECTION,
     NUM_UNIFORMS
 };
 
@@ -51,6 +52,8 @@ GLuint uniforms[NUM_UNIFORMS];
 // for moving triangle
 float x_offset = 0;
 float dx = 0.01;
+float angle = 0;
+float d_angle = 0.1;
 
 // setup data and shaders for opengl draw calls
 void init()
@@ -105,6 +108,7 @@ void init()
 
     // setup uniforms
     uniforms[MODEL] = glGetUniformLocation(shaders[FILL_RED], "model");
+    uniforms[PROJECTION] = glGetUniformLocation(shaders[FILL_RED], "projection");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
@@ -113,14 +117,20 @@ void init()
 // operates on the above global state
 void display()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // move triangle
-    // x_offset += dx;
+    // setup model matrix
+    angle += d_angle;
     glm::mat4 model(1.0f);
-    model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
-    model = glm::rotate(model, TO_RADIANS(75), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
+    model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(uniforms[MODEL], 1, GL_FALSE, glm::value_ptr(model));
+
+    // setup projection matrix
+    glm::mat4 projection(1.0f);
+    GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
+    projection = glm::perspective(45.0f, aspect_ratio, 0.1f, 100.0f);
+    glUniformMatrix4fv(uniforms[PROJECTION], 1, GL_FALSE, glm::value_ptr(projection));
 
     // draw triangle
     glBindVertexArray(vaos[TRIANGLES]);
@@ -155,6 +165,8 @@ int main(int argc, char *argv[])
 
     glfwMakeContextCurrent(window);
 
+    glEnable(GL_DEPTH_TEST);
+
     int nx;
     int ny;
     glfwGetFramebufferSize(window, &nx, &ny);
@@ -168,6 +180,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    // setup triangle data and shaders
     init();
 
     // main loop
