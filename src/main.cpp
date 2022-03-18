@@ -10,27 +10,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "load_shaders.h"
+#include "Mesh.h"
 
 #define WIDTH 800
 #define HEIGHT 600
 
 #define TO_RADIANS(x) (x * 3.14159265f / 180.0f)
-
-enum VAO_IDS {
-    TRIANGLES,
-    NUM_VAOS
-};
-
-enum BUFFER_IDS {
-    ARRAY_BUFFER,
-    INDEX_BUFFER,
-    NUM_BUFFERS
-};
-
-enum ATTRIB_IDS {
-    V_POSITION = 0,
-    NUM_ATTRIBUTES
-};
 
 enum SHADER_IDS {
     FILL_RED,
@@ -44,8 +29,6 @@ enum UNIFORM_IDS {
 };
 
 // opengl object ids
-GLuint vaos[NUM_VAOS];
-GLuint buffers[NUM_BUFFERS];
 GLuint shaders[NUM_SHADERS];
 GLuint uniforms[NUM_UNIFORMS];
 
@@ -55,16 +38,19 @@ float dx = 0.01;
 float angle = 0;
 float d_angle = 0.1;
 
+glm::vec3 *mesh_vertex_data;
+unsigned int *mesh_index_data;
+Mesh *mesh;
+
 // setup data and shaders for opengl draw calls
 void init()
 {
     // triangle data
-    GLfloat vertices[] = {
-        -1.0f, -1.0f,  0.0f,
-        0.0f,  -1.0f, 1.0f,
-        1.0f, -1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f
-    };
+    mesh_vertex_data = new glm::vec3[4];
+    mesh_vertex_data[0] = glm::vec3( -1.0f, -1.0f,  0.0f );
+    mesh_vertex_data[1] = glm::vec3(  0.0f, -1.0f,  1.0f );
+    mesh_vertex_data[2] = glm::vec3(  1.0f, -1.0f,  0.0f );
+    mesh_vertex_data[3] = glm::vec3(  0.0f,  1.0f,  0.0f );
 
     unsigned int indices[] = {
         0, 3, 1,
@@ -72,30 +58,12 @@ void init()
         2, 3, 0,
         0, 1, 2
     };
+    mesh_index_data = new unsigned int[12];
+    for (int i = 0; i < 12; i++) {
+        mesh_index_data[i] = indices[i];
+    }
 
-    // allocate vaos
-    glGenVertexArrays(NUM_VAOS, vaos);
-    glBindVertexArray(vaos[TRIANGLES]);
-
-    // allocate buffers
-    glGenBuffers(NUM_BUFFERS,buffers);
-
-    // vertices
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[ARRAY_BUFFER]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // define vertex attributes
-    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(V_POSITION);
-
-    // unbind vao and buffers - good practice
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    mesh = new Mesh(mesh_vertex_data, 4, mesh_index_data, 12);
 
     // load shaders
     shader_info shaders_info[] = {
@@ -119,24 +87,27 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // setup model matrix
+    // rotate slowly
     angle += d_angle;
+
+    // setup model matrix
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // send model matrix to shader
     glUniformMatrix4fv(uniforms[MODEL], 1, GL_FALSE, glm::value_ptr(model));
 
     // setup projection matrix
     glm::mat4 projection(1.0f);
     GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
     projection = glm::perspective(45.0f, aspect_ratio, 0.1f, 100.0f);
+
+    // send projection matrix to shader
     glUniformMatrix4fv(uniforms[PROJECTION], 1, GL_FALSE, glm::value_ptr(projection));
 
     // draw triangle
-    glBindVertexArray(vaos[TRIANGLES]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    mesh->render();
 }
 
 // glfw code in here
