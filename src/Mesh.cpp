@@ -7,10 +7,10 @@ Mesh::Mesh()
     VAO = 0;
     VBO = 0;
     IBO = 0;
-    num_indices = 0;
+    index_count = 0;
 }
 
-Mesh::Mesh(glm::vec3 *vertices, GLuint num_vertices, GLuint *indices, GLuint num_indices)
+Mesh::Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuint index_count)
 {
     // allocate vaos
     glGenVertexArrays(1, &VAO);
@@ -22,12 +22,12 @@ Mesh::Mesh(glm::vec3 *vertices, GLuint num_vertices, GLuint *indices, GLuint num
 
     // load vertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * num_vertices, &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_data_size, vertex_data, GL_STATIC_DRAW);
 
     // load indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * num_indices, &indices[0], GL_STATIC_DRAW);
-    this->num_indices = num_indices;
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * index_count, &indices[0], GL_STATIC_DRAW);
+    this->index_count = index_count;
 
     // define vertex attributes
     glEnableVertexAttribArray(V_POSITION);
@@ -44,7 +44,7 @@ void Mesh::render()
     // render mesh
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 }
 
 Mesh::~Mesh()

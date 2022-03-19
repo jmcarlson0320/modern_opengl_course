@@ -2,7 +2,6 @@
 #define MESH_H
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 enum vertex_attributes {
     V_POSITION,
@@ -12,7 +11,7 @@ enum vertex_attributes {
 class Mesh {
     public:
         Mesh();
-        Mesh(glm::vec3 *vertices, GLuint num_vertices, GLuint *indices, GLuint num_indices);
+        Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuint index_count);
         void render();
         ~Mesh();
     private:
@@ -20,7 +19,7 @@ class Mesh {
         GLuint VBO;
         GLuint IBO;
 
-        GLuint num_indices;
+        GLuint index_count;
 };
 
 #endif // MESH_H

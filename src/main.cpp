@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -38,32 +36,29 @@ float dx = 0.01;
 float angle = 0;
 float d_angle = 0.1;
 
-glm::vec3 *mesh_vertex_data;
-unsigned int *mesh_index_data;
+// shape data
 Mesh *mesh;
 
 // setup data and shaders for opengl draw calls
 void init()
 {
-    // triangle data
-    mesh_vertex_data = new glm::vec3[4];
-    mesh_vertex_data[0] = glm::vec3( -1.0f, -1.0f,  0.0f );
-    mesh_vertex_data[1] = glm::vec3(  0.0f, -1.0f,  1.0f );
-    mesh_vertex_data[2] = glm::vec3(  1.0f, -1.0f,  0.0f );
-    mesh_vertex_data[3] = glm::vec3(  0.0f,  1.0f,  0.0f );
+    // position data
+    GLfloat mesh_vertex_data[] = {
+        -1.0f, -1.0f,  0.0f,
+         0.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  0.0f,
+         0.0f,  1.0f,  0.0f
+    };
 
-    unsigned int indices[] = {
+    // index data
+    unsigned int mesh_index_data[] = {
         0, 3, 1,
         1, 3, 2,
         2, 3, 0,
         0, 1, 2
     };
-    mesh_index_data = new unsigned int[12];
-    for (int i = 0; i < 12; i++) {
-        mesh_index_data[i] = indices[i];
-    }
 
-    mesh = new Mesh(mesh_vertex_data, 4, mesh_index_data, 12);
+    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 12, mesh_index_data, 12);
 
     // load shaders
     shader_info shaders_info[] = {
@@ -116,32 +111,20 @@ void display()
 // calls display() inside main loop
 int main(int argc, char *argv[])
 {
-    // setup window and opengl context
     if (!glfwInit()) {
         printf("could not init glfw\n");
         exit(1);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
+    // setup window and opengl context
     GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "test window", NULL, NULL);
     if (!window) {
         printf("could not create window\n");
         glfwTerminate();
         exit(1);
     }
-
     glfwMakeContextCurrent(window);
-
     glEnable(GL_DEPTH_TEST);
-
-    int nx;
-    int ny;
-    glfwGetFramebufferSize(window, &nx, &ny);
-    glViewport(0, 0, nx, ny);
 
     // init glew
     if(glewInit() != GLEW_OK) {
@@ -164,6 +147,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    glfwDestroyWindow(window);
     glfwTerminate();
 
     return 0;
