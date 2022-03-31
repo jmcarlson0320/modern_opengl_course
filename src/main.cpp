@@ -9,6 +9,7 @@
 
 #include "load_shaders.h"
 #include "Mesh.h"
+#include "Shader.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -38,6 +39,7 @@ float d_angle = 0.1;
 
 // shape data
 Mesh *mesh;
+Shader *shader;
 
 // setup data and shaders for opengl draw calls
 void init()
@@ -61,6 +63,10 @@ void init()
     mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 12, mesh_index_data, 12);
 
     // load shaders
+    shader = new Shader();
+    shader->fromFile("resources/shaders/uniforms.vert", "resources/shaders/fill_red.frag");
+
+    /*
     shader_info shaders_info[] = {
         {GL_VERTEX_SHADER, "resources/shaders/uniforms.vert"},
         {GL_FRAGMENT_SHADER, "resources/shaders/fill_red.frag"},
@@ -72,8 +78,10 @@ void init()
     // setup uniforms
     uniforms[MODEL] = glGetUniformLocation(shaders[FILL_RED], "model");
     uniforms[PROJECTION] = glGetUniformLocation(shaders[FILL_RED], "projection");
+    */
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
 }
 
 // call opengl draw functions
@@ -82,27 +90,30 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // rotate slowly
+    // render the pyrimid
+    // activate shader
+    shader->use();
+
+    // update position
     angle += d_angle;
 
-    // setup model matrix
+    // model matrix
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 
-    // send model matrix to shader
-    glUniformMatrix4fv(uniforms[MODEL], 1, GL_FALSE, glm::value_ptr(model));
-
-    // setup projection matrix
+    // projection matrix
     glm::mat4 projection(1.0f);
     GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
     projection = glm::perspective(45.0f, aspect_ratio, 0.1f, 100.0f);
+    glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
 
-    // send projection matrix to shader
-    glUniformMatrix4fv(uniforms[PROJECTION], 1, GL_FALSE, glm::value_ptr(projection));
-
-    // draw triangle
+    // draw
     mesh->render();
+
+    // deactivate shader
+    shader->clear();
 }
 
 // glfw code in here
@@ -124,7 +135,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
     glfwMakeContextCurrent(window);
-    glEnable(GL_DEPTH_TEST);
 
     // init glew
     if(glewInit() != GLEW_OK) {
@@ -149,6 +159,9 @@ int main(int argc, char *argv[])
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+    delete mesh;
+    delete shader;
 
     return 0;
 }
