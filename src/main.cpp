@@ -45,6 +45,11 @@ int KEY_MAP[NUM_INPUTS] = {
 
 bool input[NUM_INPUTS] = {0};
 
+double mouse_x = 0.0f;
+double mouse_y = 0.0f;
+double mouse_dx = 0.0f;
+double mouse_dy = 0.0f;
+
 // setup data and shaders for opengl draw calls
 void init()
 {
@@ -70,30 +75,24 @@ void init()
     shader = new Shader();
     shader->fromFile("resources/shaders/uniforms.vert", "resources/shaders/fill_red.frag");
 
-    /*
-    shader_info shaders_info[] = {
-        {GL_VERTEX_SHADER, "resources/shaders/uniforms.vert"},
-        {GL_FRAGMENT_SHADER, "resources/shaders/fill_red.frag"},
-        {GL_NONE, NULL},
-    };
-    shaders[FILL_RED] = load_shaders(shaders_info);
-    glUseProgram(shaders[FILL_RED]);
-
-    // setup uniforms
-    uniforms[MODEL] = glGetUniformLocation(shaders[FILL_RED], "model");
-    uniforms[PROJECTION] = glGetUniformLocation(shaders[FILL_RED], "projection");
-    */
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 }
 
 void handleInput(GLFWwindow *window)
 {
+    double prev_x = mouse_x;
+    double prev_y = mouse_y;
+
     glfwPollEvents();
+
     for (int i = 0; i < NUM_INPUTS; i++) {
         input[i] = glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS;
     }
+
+    glfwGetCursorPos(window, &mouse_x, &mouse_y);
+    mouse_dx = mouse_x - prev_x;
+    mouse_dy = mouse_y - prev_y;
 }
 
 void update(float dt)
@@ -101,7 +100,6 @@ void update(float dt)
 }
 
 // call opengl draw functions
-// operates on the above global state
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -119,6 +117,9 @@ void display()
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 
+    // view matrix
+    // glm::mat4 view(1.0f);
+
     // projection matrix
     glm::mat4 projection(1.0f);
     GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
@@ -130,7 +131,6 @@ void display()
 
     // deactivate shader
     shader->clear();
-
 }
 
 // glfw code in here
@@ -152,6 +152,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
     // init glew
     if(glewInit() != GLEW_OK) {
