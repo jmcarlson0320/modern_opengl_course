@@ -41,6 +41,26 @@ float d_angle = 0.1;
 Mesh *mesh;
 Shader *shader;
 
+// user input
+enum KEYBOARD_INPUTS {
+    FORWARD,
+    BACK,
+    LEFT,
+    RIGHT,
+    QUIT,
+    NUM_INPUTS
+};
+
+int KEY_MAP[NUM_INPUTS] = {
+    [FORWARD] = GLFW_KEY_W,
+    [BACK] = GLFW_KEY_S,
+    [LEFT] = GLFW_KEY_A,
+    [RIGHT] = GLFW_KEY_D,
+    [QUIT] = GLFW_KEY_Q
+};
+
+bool input[NUM_INPUTS] = {0};
+
 // setup data and shaders for opengl draw calls
 void init()
 {
@@ -84,6 +104,18 @@ void init()
     glEnable(GL_DEPTH_TEST);
 }
 
+void handleInput(GLFWwindow *window)
+{
+    glfwPollEvents();
+    for (int i = 0; i < NUM_INPUTS; i++) {
+        input[i] = glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS;
+    }
+}
+
+void update(float dt)
+{
+}
+
 // call opengl draw functions
 // operates on the above global state
 void display()
@@ -114,6 +146,7 @@ void display()
 
     // deactivate shader
     shader->clear();
+
 }
 
 // glfw code in here
@@ -148,12 +181,23 @@ int main(int argc, char *argv[])
     init();
 
     // main loop
+    // float last = get_time();
+    float last = 0.0f;
     while(!glfwWindowShouldClose(window)) {
+        // float cur = get_time();
+        float cur = 0.0f;
+        float dt = cur - last;
+
+        handleInput(window);
+        update(dt);
         display();
+
         glfwSwapBuffers(window);
-        glfwPollEvents();
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, 1);
+
+        last = cur;
+
+        if (input[QUIT]) {
+            glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
 
