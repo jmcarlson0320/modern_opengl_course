@@ -16,28 +16,12 @@
 
 #define TO_RADIANS(x) (x * 3.14159265f / 180.0f)
 
-enum SHADER_IDS {
-    FILL_RED,
-    NUM_SHADERS
-};
-
-enum UNIFORM_IDS {
-    MODEL,
-    PROJECTION,
-    NUM_UNIFORMS
-};
-
-// opengl object ids
-GLuint shaders[NUM_SHADERS];
-GLuint uniforms[NUM_UNIFORMS];
-
-// for moving triangle
+// triangle parameters
 float x_offset = 0;
 float dx = 0.01;
 float angle = 0;
 float d_angle = 0.1;
 
-// shape data
 Mesh *mesh;
 Shader *shader;
 
