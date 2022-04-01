@@ -92,11 +92,12 @@ void handleInput(GLFWwindow *window)
 
     glfwGetCursorPos(window, &mouse_x, &mouse_y);
     mouse_dx = mouse_x - prev_x;
-    mouse_dy = mouse_y - prev_y;
+    mouse_dy = prev_y - mouse_y; // up = pos
 }
 
 void update(float dt)
 {
+    // printf("x:%lf y:%lf\n", mouse_dx, mouse_dy);
 }
 
 // call opengl draw functions
