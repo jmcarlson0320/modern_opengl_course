@@ -114,11 +114,13 @@ void update(float dt)
     GLfloat delta_pitch = mouse_dy * 0.001;
     GLfloat delta_yaw = mouse_dx * 0.001;
 
-    // rotate view pitch
+    // rotation matrix for view pitch
     glm::mat4 rotate_x = glm::rotate(glm::mat4(1.0f), delta_pitch, right);
 
-    // rotate view yaw
+    // rotation matrix for view yaw
     glm::mat4 rotate_y = glm::rotate(glm::mat4(1.0f), delta_yaw, -glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // rotate the view direction by pitch first, then yaw
     glm::vec4 dir_homog = rotate_y * rotate_x * glm::vec4(dir, 1.0f);
     dir = glm::vec3(dir_homog);
 
