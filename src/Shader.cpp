@@ -5,6 +5,7 @@ Shader::Shader()
 {
     shaderID = 0;
     uniformModel = 0;
+    uniformView = 0;
     uniformProjection = 0;
 }
 
@@ -24,6 +25,7 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
 
     use();
     uniformModel = glGetUniformLocation(shaderID, "model");
+    uniformView = glGetUniformLocation(shaderID, "view");
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     clear();
 }
@@ -31,6 +33,11 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
 GLuint Shader::getProjectionLocation()
 {
     return uniformProjection;
+}
+
+GLuint Shader::getViewLocation()
+{
+    return uniformView;
 }
 
 GLuint Shader::getModelLocation()

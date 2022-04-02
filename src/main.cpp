@@ -50,6 +50,10 @@ double mouse_y = 0.0f;
 double mouse_dx = 0.0f;
 double mouse_dy = 0.0f;
 
+// camera
+glm::vec3 eye;
+glm::vec3 dir;
+
 // setup data and shaders for opengl draw calls
 void init()
 {
@@ -77,6 +81,10 @@ void init()
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
+
+    // init camera
+    eye = glm::vec3(0.0f, 0.0f, 1.0f);
+    dir = glm::vec3(0.0f, 0.0f, -1.0f);
 }
 
 void handleInput(GLFWwindow *window)
@@ -97,7 +105,37 @@ void handleInput(GLFWwindow *window)
 
 void update(float dt)
 {
-    // printf("x:%lf y:%lf\n", mouse_dx, mouse_dy);
+    // update camera
+    // get forward and right vectors from view direction
+    glm::vec3 forward = glm::vec3(dir.x, 0.0f, dir.z);
+    glm::vec3 right = glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f));
+    right = glm::normalize(right);
+
+    // get delta pitch and yaw from mouse input
+    GLfloat delta_pitch = mouse_dy * 0.001;
+    GLfloat delta_yaw = mouse_dx * 0.001;
+
+    // rotate view pitch
+    glm::mat4 rotate_x = glm::rotate(glm::mat4(1.0f), delta_pitch, right);
+
+    // rotate view yaw
+    glm::mat4 rotate_y = glm::rotate(glm::mat4(1.0f), delta_yaw, -glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec4 dir_homog = rotate_y * rotate_x * glm::vec4(dir, 1.0f);
+    dir = glm::vec3(dir_homog);
+
+    // move camera position
+    if (input[FORWARD]) {
+        eye = eye + forward * 0.05f;
+    }
+    if (input[BACK]) {
+        eye = eye + forward * -0.05f;
+    }
+    if (input[LEFT]) {
+        eye = eye + right * -0.05f;
+    }
+    if (input[RIGHT]) {
+        eye = eye + right * 0.05f;
+    }
 }
 
 // call opengl draw functions
@@ -119,7 +157,9 @@ void display()
     glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 
     // view matrix
-    // glm::mat4 view(1.0f);
+    glm::mat4 view(1.0f);
+    view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
 
     // projection matrix
     glm::mat4 projection(1.0f);

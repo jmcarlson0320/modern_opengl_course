@@ -11,6 +11,7 @@ class Shader {
         void fromFile(const char *vertFilename, const char *fragFilename);
 
         GLuint getModelLocation();
+        GLuint getViewLocation();
         GLuint getProjectionLocation();
 
         void use();
@@ -19,6 +20,7 @@ class Shader {
     private:
         GLuint shaderID;
         GLuint uniformModel;
+        GLuint uniformView;
         GLuint uniformProjection;
 };
 

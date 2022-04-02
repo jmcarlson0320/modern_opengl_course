@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-enum vertex_attributes {
+enum VERTEX_ATTRIBUTES {
     V_POSITION,
     NUM_ATTRIBUTES
 };
