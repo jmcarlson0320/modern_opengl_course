@@ -109,7 +109,6 @@ void update(float dt)
     // get forward and right vectors from view direction
     glm::vec3 forward = glm::vec3(dir.x, 0.0f, dir.z);
     glm::vec3 right = glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f));
-    right = glm::normalize(right);
 
     // get delta pitch and yaw from mouse input
     GLfloat delta_pitch = mouse_dy * 0.001;
