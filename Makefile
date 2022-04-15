@@ -1,5 +1,6 @@
 SRC_DIR = src
 OBJ_DIR = obj
+LIB_DIR = lib
 BIN_DIR = .
 
 EXE = $(BIN_DIR)/app
@@ -7,9 +8,9 @@ EXE = $(BIN_DIR)/app
 SRC = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-CPPFLAGS = -Iinclude
+CPPFLAGS = -Iinclude -I$(LIB_DIR)
 CXXFLAGS = -Wall -g
-LDFLAGS = -Llib
+LDFLAGS = -L$(LIB_DIR)
 LDLIBS = -lGL -lGLEW -lglfw
 
 .PHONY: all clean
