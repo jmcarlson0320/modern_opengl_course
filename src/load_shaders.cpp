@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
+#include <vector>
 #include <GL/glew.h>
 
 #define MAX_LOG_LENGTH 1024
@@ -32,8 +34,19 @@ GLuint load_shaders(shader_info *shaders)
         GLint success;
         glGetShaderiv(cur->shader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            // print error and return
-            printf("error compiling shader\n");
+            GLuint shader = cur->shader;
+            GLint maxLength = 0;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+            // The maxLength includes the NULL character
+            std::vector<GLchar> errorLog(maxLength);
+            glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
+            std::string s(errorLog.begin(), errorLog.end());
+            std::cout << s;
+
+            // Provide the infolog in whatever manor you deem best.
+            // Exit with failure.
+            glDeleteShader(shader); // Don't leak the shader.
             return 0;
         }
 

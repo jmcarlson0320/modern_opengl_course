@@ -10,6 +10,7 @@
 #include "load_shaders.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Texture.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -24,6 +25,7 @@ float d_angle = 0.1;
 
 Mesh *mesh;
 Shader *shader;
+Texture *texture;
 
 // user input
 enum KEYBOARD_INPUTS {
@@ -54,15 +56,32 @@ double mouse_dy = 0.0f;
 glm::vec3 eye;
 glm::vec3 dir;
 
+void MessageCallback( GLenum source,
+                      GLenum type,
+                      GLuint id,
+                      GLenum severity,
+                      GLsizei length,
+                      const GLchar* message,
+                      const void* userParam )
+{
+    fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, severity, message );
+}
+
 // setup data and shaders for opengl draw calls
 void init()
 {
+    // enable debug output
+//    glEnable(GL_DEBUG_OUTPUT);
+//    glDebugMessageCallback(MessageCallback, 0);
+
     // position data
     GLfloat mesh_vertex_data[] = {
-        -1.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f
+    //   x      y      z     u     v
+        -1.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f,  1.0f, 0.5f, 0.0f,
+         1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+         0.0f,  1.0f,  0.0f, 0.5f, 1.0f
     };
 
     // index data
@@ -73,7 +92,7 @@ void init()
         0, 1, 2
     };
 
-    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 12, mesh_index_data, 12);
+    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 20, mesh_index_data, 12);
 
     // load shaders
     shader = new Shader();
@@ -85,6 +104,11 @@ void init()
     // init camera
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
+
+    // load texture
+    texture = new Texture();
+    texture->fromFile("resources/textures/bluerock_texture.jpg");
+    texture->use();
 }
 
 void handleInput(GLFWwindow *window)
@@ -235,6 +259,7 @@ int main(int argc, char *argv[])
 
     delete mesh;
     delete shader;
+    delete texture;
 
     return 0;
 }

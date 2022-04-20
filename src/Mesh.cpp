@@ -30,8 +30,12 @@ Mesh::Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuin
     this->index_count = index_count;
 
     // define vertex attributes
+    // position
+    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 5, 0);
     glEnableVertexAttribArray(V_POSITION);
-    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    // texture coor
+    glVertexAttribPointer(V_TEXTURE, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 5, (void *) (sizeof(vertex_data[0]) * 3));
+    glEnableVertexAttribArray(V_TEXTURE);
 
     // unbind vao and buffers - good practice
     glBindBuffer(GL_ARRAY_BUFFER, 0);
