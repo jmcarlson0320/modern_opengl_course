@@ -34,10 +34,18 @@ enum KEYBOARD_INPUTS {
     LEFT,
     RIGHT,
     QUIT,
-    NUM_INPUTS
+    NUM_KEYBOARD_INPUTS
 };
 
-int KEY_MAP[NUM_INPUTS] = {
+enum MOUSE_INPUTS {
+    X,
+    Y,
+    DX,
+    DY,
+    NUM_MOUSE_INPUTS
+};
+
+int KEY_MAP[NUM_KEYBOARD_INPUTS] = {
     [FORWARD] = GLFW_KEY_W,
     [BACK] = GLFW_KEY_S,
     [LEFT] = GLFW_KEY_A,
@@ -45,12 +53,8 @@ int KEY_MAP[NUM_INPUTS] = {
     [QUIT] = GLFW_KEY_Q
 };
 
-bool input[NUM_INPUTS] = {0};
-
-double mouse_x = 0.0f;
-double mouse_y = 0.0f;
-double mouse_dx = 0.0f;
-double mouse_dy = 0.0f;
+bool keyboard_input[NUM_KEYBOARD_INPUTS] = {0};
+double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 
 // camera
 glm::vec3 eye;
@@ -113,18 +117,18 @@ void init()
 
 void handleInput(GLFWwindow *window)
 {
-    double prev_x = mouse_x;
-    double prev_y = mouse_y;
+    double prev_x = mouse_input[X];
+    double prev_y = mouse_input[Y];
 
     glfwPollEvents();
 
-    for (int i = 0; i < NUM_INPUTS; i++) {
-        input[i] = glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS;
+    for (int i = 0; i < NUM_KEYBOARD_INPUTS; i++) {
+        keyboard_input[i] = (glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS);
     }
 
-    glfwGetCursorPos(window, &mouse_x, &mouse_y);
-    mouse_dx = mouse_x - prev_x;
-    mouse_dy = prev_y - mouse_y; // up = pos
+    glfwGetCursorPos(window, &mouse_input[X], &mouse_input[Y]);
+    mouse_input[DX] = mouse_input[X] - prev_x;
+    mouse_input[DY] = prev_y - mouse_input[Y];
 }
 
 void update(float dt)
@@ -135,8 +139,8 @@ void update(float dt)
     glm::vec3 right = glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f));
 
     // get delta pitch and yaw from mouse input
-    GLfloat delta_pitch = mouse_dy * 0.001;
-    GLfloat delta_yaw = mouse_dx * 0.001;
+    GLfloat delta_pitch = mouse_input[DY] * 0.001;
+    GLfloat delta_yaw = mouse_input[DX] * 0.001;
 
     // rotation matrix for view pitch
     glm::mat4 rotate_x = glm::rotate(glm::mat4(1.0f), delta_pitch, right);
@@ -149,16 +153,16 @@ void update(float dt)
     dir = glm::vec3(dir_homog);
 
     // move camera position
-    if (input[FORWARD]) {
+    if (keyboard_input[FORWARD]) {
         eye = eye + forward * 0.05f;
     }
-    if (input[BACK]) {
+    if (keyboard_input[BACK]) {
         eye = eye + forward * -0.05f;
     }
-    if (input[LEFT]) {
+    if (keyboard_input[LEFT]) {
         eye = eye + right * -0.05f;
     }
-    if (input[RIGHT]) {
+    if (keyboard_input[RIGHT]) {
         eye = eye + right * 0.05f;
     }
 }
@@ -249,7 +253,7 @@ int main(int argc, char *argv[])
 
         last = cur;
 
-        if (input[QUIT]) {
+        if (keyboard_input[QUIT]) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
