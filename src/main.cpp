@@ -11,6 +11,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Light.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -81,11 +82,11 @@ void init()
 
     // position data
     GLfloat mesh_vertex_data[] = {
-    //   x      y      z     u     v
-        -1.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-         0.0f, -1.0f,  1.0f, 0.5f, 0.0f,
-         1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-         0.0f,  1.0f,  0.0f, 0.5f, 1.0f
+    //   x      y      z     r     g     b
+        -1.0f, -1.0f,  0.0f, 1.0f, 1.0f, 0.0f,
+         0.0f, -1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+         1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 1.0f,
+         0.0f,  1.0f,  0.0f, 1.0f, 1.0f, 1.0f
     };
 
     // index data
@@ -96,7 +97,7 @@ void init()
         0, 1, 2
     };
 
-    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 20, mesh_index_data, 12);
+    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 24, mesh_index_data, 12);
 
     // load shaders
     shader = new Shader();

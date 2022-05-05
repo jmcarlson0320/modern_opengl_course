@@ -5,7 +5,7 @@
 
 enum VERTEX_ATTRIBUTES {
     V_POSITION,
-    V_TEXTURE,
+    V_COLOR,
     NUM_ATTRIBUTES
 };
 

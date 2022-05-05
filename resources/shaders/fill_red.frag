@@ -1,10 +1,10 @@
 #version 330
 
-in vec2 vertex_tex_coor;
+in vec3 vertex_color;
 
 out vec4 color;
 
 void main()
 {
-	color = vec4(vertex_tex_coor.x, vertex_tex_coor.y, 0.8f, 1.0f);
+	color = vec4(vertex_color, 1.0f);
 }
