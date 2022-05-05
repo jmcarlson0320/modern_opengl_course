@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -12,19 +13,33 @@
 #define WIDTH 800
 #define HEIGHT 600
 
+typedef struct {
+    glm::vec3 pos;
+    glm::vec3 color;
+} vertexData;
+std::vector<vertexData> modelData;
+
 GLuint loadVertexData()
 {
-                        // pos                color
-                        // x      y     z     r     g     b
-    GLfloat vertices[] = {0.0f,  3.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-		         -3.0f, -3.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-                          3.0f, -3.0f, 0.0f, 1.0f, 0.0f, 1.0f};
+    modelData.push_back({
+        glm::vec3(0.0f, 3.0f, 0.0f),
+        glm::vec3(1.0f, 1.0f, 0.0f)
+    });
+    modelData.push_back({
+        glm::vec3(-3.0f, -3.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 1.0f)
+    });
+    modelData.push_back({
+        glm::vec3(3.0f, -3.0f, 0.0f),
+        glm::vec3(1.0f, 0.0f, 1.0f)
+    });
 
     GLuint triangleVBO[0];
     glGenBuffers(1, triangleVBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    int numBytes =modelData.size() * sizeof(vertexData);
+    glBufferData(GL_ARRAY_BUFFER, numBytes, modelData.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLuint VAO;
@@ -87,6 +102,7 @@ int main(int argc, char *argv[])
 
     // set projection matrix
     glm::mat4 projMatrix = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 10.0f);
+
 
     // main loop
     while(!glfwWindowShouldClose(window)) {
