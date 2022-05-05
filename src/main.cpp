@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <stdio.h>
 
 #include <GL/glew.h>
@@ -7,7 +9,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "load_shaders.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -22,7 +23,7 @@
 float x_offset = 0;
 float dx = 0.01;
 float angle = 0;
-float d_angle = 0.1;
+float d_angle = 0.7;
 
 Mesh *mesh;
 Shader *shader;
@@ -110,10 +111,12 @@ void init()
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
 
+/*
     // load texture
     texture = new Texture();
     texture->fromFile("resources/textures/bluerock_texture.jpg");
     texture->use();
+*/
 }
 
 void handleInput(GLFWwindow *window)

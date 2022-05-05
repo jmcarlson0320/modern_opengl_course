@@ -2,22 +2,25 @@
 #define TEXTURE_H
 
 #include <GL/glew.h>
+#include "stb_image.h"
 
 class Texture {
     public:
         Texture();
-        ~Texture();
+        Texture(char *fileLocation);
 
-        void fromFile(const char *imageFilename);
-
+        void load();
         void use();
         void clear();
+
+        ~Texture();
 
     private:
         GLuint textureID;
         int width;
         int height;
         int bitDepth;
+        char *fileLocation;
 };
 
 #endif // TEXTURE_H
