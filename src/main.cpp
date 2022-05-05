@@ -101,7 +101,7 @@ void init()
 
     // load shaders
     shader = new Shader();
-    shader->fromFile("resources/shaders/uniforms.vert", "resources/shaders/fill_red.frag");
+    shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
