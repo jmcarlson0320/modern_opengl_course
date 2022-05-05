@@ -24,10 +24,13 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     shaderID = load_shaders(vert_frag_info);
 
     use();
-    uniformModel = glGetUniformLocation(shaderID, "model");
-    uniformView = glGetUniformLocation(shaderID, "view");
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     clear();
+}
+
+GLuint Shader::getID()
+{
+    return shaderID;
 }
 
 GLuint Shader::getProjectionLocation()

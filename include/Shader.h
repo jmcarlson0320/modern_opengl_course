@@ -10,6 +10,7 @@ class Shader {
 
         void fromFile(const char *vertFilename, const char *fragFilename);
 
+	GLuint getID();
         GLuint getModelLocation();
         GLuint getViewLocation();
         GLuint getProjectionLocation();
