@@ -81,13 +81,12 @@ void init()
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
 
-    // position data
     GLfloat mesh_vertex_data[] = {
-    //   x      y      z     r     g     b
-        -1.0f, -1.0f,  0.0f, 1.0f, 1.0f, 0.0f,
-         0.0f, -1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-         1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-         0.0f,  1.0f,  0.0f, 1.0f, 1.0f, 1.0f
+    //   x      y     z     r     g     b     u     v
+        -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+         0.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f
     };
 
     // index data
@@ -98,11 +97,15 @@ void init()
         0, 1, 2
     };
 
-    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 24, mesh_index_data, 12);
+    // load mesh
+    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 32, mesh_index_data, 12);
 
     // load shaders
     shader = new Shader();
     shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
+
+    // load texture
+    texture = new Texture("resources/textures/noise.png");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -111,12 +114,6 @@ void init()
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
 
-/*
-    // load texture
-    texture = new Texture();
-    texture->fromFile("resources/textures/bluerock_texture.jpg");
-    texture->use();
-*/
 }
 
 void handleInput(GLFWwindow *window)
@@ -179,6 +176,7 @@ void display()
     // render the pyrimid
     // activate shader
     shader->use();
+    texture->use();
 
     // update position
     angle += d_angle;

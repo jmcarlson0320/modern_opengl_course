@@ -6,19 +6,9 @@ Texture::Texture()
     width = 0;
     height = 0;
     bitDepth = 0;
-    fileLocation = NULL;
 }
 
-Texture::Texture(char *fileLocation)
-{
-    textureID = 0;
-    width = 0;
-    height = 0;
-    bitDepth = 0;
-    fileLocation = fileLocation;
-}
-
-void Texture::load()
+Texture::Texture(const char *fileLocation)
 {
     int num_pixel_components;
     unsigned char *image_data;
@@ -37,7 +27,7 @@ void Texture::load()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -58,7 +48,6 @@ void Texture::clear()
     width = 0;
     height = 0;
     bitDepth = 0;
-    fileLocation = NULL;
 }
 
 Texture::~Texture()

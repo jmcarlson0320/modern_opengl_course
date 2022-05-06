@@ -31,11 +31,18 @@ Mesh::Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuin
 
     // define vertex attributes
     // position
-    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 6, 0);
+    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, 0);
     glEnableVertexAttribArray(V_POSITION);
+
     // color
-    glVertexAttribPointer(V_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 6, (void *) (sizeof(vertex_data[0]) * 3));
+    glVertexAttribPointer(V_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, (void *) (sizeof(vertex_data[0]) * 3));
     glEnableVertexAttribArray(V_COLOR);
+
+    // texture coordinates
+    glVertexAttribPointer(V_TEXCOOR, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, (void *) (sizeof(vertex_data[0]) * 6));
+    glEnableVertexAttribArray(V_TEXCOOR);
+
+
 
     // unbind vao and buffers - good practice
     glBindBuffer(GL_ARRAY_BUFFER, 0);
