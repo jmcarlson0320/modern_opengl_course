@@ -27,6 +27,8 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     uniformModel = glGetUniformLocation(shaderID, "model");
     uniformView = glGetUniformLocation(shaderID, "view");
     uniformProjection = glGetUniformLocation(shaderID, "projection");
+    uniformAmbientIntensity = glGetUniformLocation(shaderID, "directionalLight.ambientIntensity");
+    uniformAmbientColor = glGetUniformLocation(shaderID, "directionalLight.color");
     clear();
 }
 
@@ -43,6 +45,16 @@ GLuint Shader::getViewLocation()
 GLuint Shader::getModelLocation()
 {
     return uniformModel;
+}
+
+GLuint Shader::getAmbientIntensityLocation()
+{
+    return uniformAmbientIntensity;
+}
+
+GLuint Shader::getAmbientColorLocation()
+{
+    return uniformAmbientColor;
 }
 
 void Shader::use()

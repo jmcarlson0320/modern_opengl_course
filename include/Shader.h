@@ -13,6 +13,8 @@ class Shader {
         GLuint getModelLocation();
         GLuint getViewLocation();
         GLuint getProjectionLocation();
+        GLuint getAmbientIntensityLocation();
+        GLuint getAmbientColorLocation();
 
         void use();
         void clear();
@@ -22,6 +24,8 @@ class Shader {
         GLuint uniformModel;
         GLuint uniformView;
         GLuint uniformProjection;
+        GLuint uniformAmbientIntensity;
+        GLuint uniformAmbientColor;
 };
 
 #endif // SHADER_H

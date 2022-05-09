@@ -28,6 +28,7 @@ float d_angle = 0.7;
 Mesh *mesh;
 Shader *shader;
 Texture *texture;
+Light *light;
 
 // user input
 enum KEYBOARD_INPUTS {
@@ -105,7 +106,9 @@ void init()
     shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     // load texture
-    texture = new Texture("resources/textures/noise.png");
+    texture = new Texture("resources/textures/bluerock_texture.jpg");
+
+    light = new Light(1.0f, 1.0f, 1.0f, 0.3f);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -197,6 +200,10 @@ void display()
     GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
     projection = glm::perspective(45.0f, aspect_ratio, 0.1f, 100.0f);
     glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
+
+
+    // ambient light
+    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation());
 
     // draw
     mesh->render();
