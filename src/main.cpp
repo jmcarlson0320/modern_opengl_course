@@ -78,16 +78,17 @@ void MessageCallback( GLenum source,
 // setup data and shaders for opengl draw calls
 void init()
 {
-    // enable debug output
+//    enable debug output
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
 
     GLfloat mesh_vertex_data[] = {
-    //   x      y     z     r     g     b     u     v
-        -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f,
-         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-         0.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f
+    //   pos                normal            color             texture
+    //   x      y     z     nx    ny    nz    r     g     b     u     v
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f,
+         1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+         0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f
     };
 
     // index data
@@ -99,16 +100,16 @@ void init()
     };
 
     // load mesh
-    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 32, mesh_index_data, 12);
+    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 44, mesh_index_data, 12);
 
     // load shaders
     shader = new Shader();
     shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     // load texture
-    texture = new Texture("resources/textures/bluerock_texture.jpg");
+    texture = new Texture("resources/textures/noise.png");
 
-    light = new Light(1.0f, 1.0f, 1.0f, 0.3f);
+    light = new Light(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -203,7 +204,7 @@ void display()
 
 
     // ambient light
-    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation());
+    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), 0, 0);
 
     // draw
     mesh->render();

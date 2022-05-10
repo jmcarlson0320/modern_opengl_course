@@ -31,15 +31,19 @@ Mesh::Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuin
 
     // define vertex attributes
     // position
-    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, 0);
+    glVertexAttribPointer(V_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, 0);
     glEnableVertexAttribArray(V_POSITION);
 
+    // normal
+    glVertexAttribPointer(V_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, (void *) (sizeof(vertex_data[0]) * 3));
+    glEnableVertexAttribArray(V_COLOR);
+
     // color
-    glVertexAttribPointer(V_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, (void *) (sizeof(vertex_data[0]) * 3));
+    glVertexAttribPointer(V_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, (void *) (sizeof(vertex_data[0]) * 6));
     glEnableVertexAttribArray(V_COLOR);
 
     // texture coordinates
-    glVertexAttribPointer(V_TEXCOOR, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 8, (void *) (sizeof(vertex_data[0]) * 6));
+    glVertexAttribPointer(V_TEXCOOR, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, (void *) (sizeof(vertex_data[0]) * 9));
     glEnableVertexAttribArray(V_TEXCOOR);
 
 
