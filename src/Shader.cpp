@@ -7,6 +7,10 @@ Shader::Shader()
     uniformModel = 0;
     uniformView = 0;
     uniformProjection = 0;
+    uniformAmbientIntensity = 0;
+    uniformAmbientColor = 0;
+    uniformDiffuseIntensity = 0;
+    uniformDirection = 0;
 }
 
 Shader::~Shader()
@@ -29,6 +33,8 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     uniformAmbientIntensity = glGetUniformLocation(shaderID, "directionalLight.ambientIntensity");
     uniformAmbientColor = glGetUniformLocation(shaderID, "directionalLight.color");
+    uniformDiffuseIntensity = glGetUniformLocation(shaderID, "directionalLight.diffuseIntensity");
+    uniformDirection = glGetUniformLocation(shaderID, "directionalLight.direction");
     clear();
 }
 
@@ -55,6 +61,16 @@ GLuint Shader::getAmbientIntensityLocation()
 GLuint Shader::getAmbientColorLocation()
 {
     return uniformAmbientColor;
+}
+
+GLuint Shader::getDiffuseIntensityLocation()
+{
+    return uniformDiffuseIntensity;
+}
+
+GLuint Shader::getDirectionLocation()
+{
+    return uniformDirection;
 }
 
 void Shader::use()

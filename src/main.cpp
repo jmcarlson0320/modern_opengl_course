@@ -63,6 +63,54 @@ double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 glm::vec3 eye;
 glm::vec3 dir;
 
+void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
+{
+    for (unsigned int i = 0; i < num_indices; i += 3) {
+        // initialize indices to position of vertices
+        unsigned int index_v0 = indices[i] * vertex_length;
+        unsigned int index_v1 = indices[i + 1] * vertex_length;
+        unsigned int index_v2 = indices[i + 2] * vertex_length;
+
+        // calculate the normal of the triangle defined by v0, v1, v2
+        glm::vec3 edge_01(vertices[index_v1] - vertices[index_v0], vertices[index_v1 + 1] - vertices[index_v0 + 1], vertices[index_v1 + 2] - vertices[index_v0 + 2]);
+        glm::vec3 edge_02(vertices[index_v2] - vertices[index_v0], vertices[index_v2 + 1] - vertices[index_v0 + 1], vertices[index_v2 + 2] - vertices[index_v0 + 2]);
+        glm::vec3 normal_012 = glm::cross(edge_01, edge_02);
+        normal_012 = glm::normalize(normal_012);
+
+        // point indices to normal of vertices
+        index_v0 += normal_offset;
+        index_v1 += normal_offset;
+        index_v2 += normal_offset;
+
+        // add the triangle normal to each vertex normal
+        // v0
+        vertices[index_v0] += normal_012.x;
+        vertices[index_v0 + 1] += normal_012.y;
+        vertices[index_v0 + 2] += normal_012.z;
+
+        // v1
+        vertices[index_v1] += normal_012.x;
+        vertices[index_v1 + 1] += normal_012.y;
+        vertices[index_v1 + 2] += normal_012.z;
+
+        // v2
+        vertices[index_v2] += normal_012.x;
+        vertices[index_v2 + 1] += normal_012.y;
+        vertices[index_v2 + 2] += normal_012.z;
+    }
+
+    // vertex normals now hold the sum of the normals of the surfaces dependent on that vertex
+    // finally we normalize the normals
+    for (unsigned int i = 0; i < num_vertices / vertex_length; i++) {
+        unsigned int cur_normal_offset = i * vertex_length + normal_offset;
+        glm::vec3 v(vertices[cur_normal_offset], vertices[cur_normal_offset + 1], vertices[cur_normal_offset + 2]);
+        v = glm::normalize(v);
+        vertices[cur_normal_offset] = v.x;
+        vertices[cur_normal_offset + 1] = v.y;
+        vertices[cur_normal_offset + 2] = v.z;
+    }
+}
+
 void MessageCallback( GLenum source,
                       GLenum type,
                       GLuint id,
@@ -99,6 +147,8 @@ void init()
         0, 1, 2
     };
 
+    calcAvgNormals(mesh_index_data, 12, mesh_vertex_data, 44, 11, 3);
+
     // load mesh
     mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 44, mesh_index_data, 12);
 
@@ -109,7 +159,7 @@ void init()
     // load texture
     texture = new Texture("resources/textures/noise.png");
 
-    light = new Light(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+    light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -204,8 +254,9 @@ void display()
 
 
     // ambient light
-    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), 0, 0);
+    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
 
+    printf("%d\n%d\n", shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
     // draw
     mesh->render();
 

@@ -36,7 +36,7 @@ Mesh::Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuin
 
     // normal
     glVertexAttribPointer(V_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, (void *) (sizeof(vertex_data[0]) * 3));
-    glEnableVertexAttribArray(V_COLOR);
+    glEnableVertexAttribArray(V_NORMAL);
 
     // color
     glVertexAttribPointer(V_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_data[0]) * 11, (void *) (sizeof(vertex_data[0]) * 6));

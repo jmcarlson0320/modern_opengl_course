@@ -15,6 +15,8 @@ class Shader {
         GLuint getProjectionLocation();
         GLuint getAmbientIntensityLocation();
         GLuint getAmbientColorLocation();
+        GLuint getDiffuseIntensityLocation();
+        GLuint getDirectionLocation();
 
         void use();
         void clear();
@@ -26,6 +28,9 @@ class Shader {
         GLuint uniformProjection;
         GLuint uniformAmbientIntensity;
         GLuint uniformAmbientColor;
+        GLuint uniformDiffuseIntensity;
+        GLuint uniformDirection;
+
 };
 
 #endif // SHADER_H
