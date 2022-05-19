@@ -15,8 +15,8 @@
 #include "Light.h"
 #include "Material.h"
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1280
+#define HEIGHT 720
 
 #define TO_RADIANS(x) (x * 3.14159265f / 180.0f)
 
@@ -136,9 +136,9 @@ void init()
     GLfloat mesh_vertex_data[] = {
     //   pos                normal            color             texture
     //   x      y     z     nx    ny    nz    r     g     b     u     v
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
          0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f,
-         1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+         1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
          0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f
     };
 
