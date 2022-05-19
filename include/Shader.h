@@ -13,10 +13,13 @@ class Shader {
         GLuint getModelLocation();
         GLuint getViewLocation();
         GLuint getProjectionLocation();
+        GLuint getEyePositionLocation();
         GLuint getAmbientIntensityLocation();
         GLuint getAmbientColorLocation();
         GLuint getDiffuseIntensityLocation();
         GLuint getDirectionLocation();
+        GLuint getSpecularIntensityLocation();
+        GLuint getShininessLocation();
 
         void use();
         void clear();
@@ -26,10 +29,13 @@ class Shader {
         GLuint uniformModel;
         GLuint uniformView;
         GLuint uniformProjection;
+        GLuint uniformEyePosition;
         GLuint uniformAmbientIntensity;
         GLuint uniformAmbientColor;
         GLuint uniformDiffuseIntensity;
         GLuint uniformDirection;
+        GLuint uniformSpecularIntensity;
+        GLuint uniformShininess;
 
 };
 

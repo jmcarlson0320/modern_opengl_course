@@ -13,6 +13,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Light.h"
+#include "Material.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -29,6 +30,8 @@ Mesh *mesh;
 Shader *shader;
 Texture *texture;
 Light *light;
+Material *shinyMaterial;
+Material *dullMaterial;
 
 // user input
 enum KEYBOARD_INPUTS {
@@ -141,10 +144,10 @@ void init()
 
     // index data
     unsigned int mesh_index_data[] = {
-        0, 3, 1,
-        1, 3, 2,
+        0, 1, 2,
         2, 3, 0,
-        0, 1, 2
+        0, 3, 1,
+        1, 3, 2
     };
 
     calcAvgNormals(mesh_index_data, 12, mesh_vertex_data, 44, 11, 3);
@@ -159,7 +162,12 @@ void init()
     // load texture
     texture = new Texture("resources/textures/noise.png");
 
+    // load light
     light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
+
+    // load material
+    shinyMaterial = new Material(1.0f, 32);
+    dullMaterial = new Material(0.3f, 4);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -256,7 +264,9 @@ void display()
     // ambient light
     light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
 
-    printf("%d\n%d\n", shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
+    // specular material
+    shinyMaterial->UseMaterial(shader->getSpecularIntensityLocation(), shader->getShininessLocation());
+
     // draw
     mesh->render();
 
