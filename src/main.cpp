@@ -65,6 +65,10 @@ double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 // camera
 glm::vec3 eye;
 glm::vec3 dir;
+GLfloat near;
+GLfloat far;
+GLfloat fov;
+GLfloat aspect_ratio;
 
 void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
 {
@@ -175,6 +179,10 @@ void init()
     // init camera
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
+    near = 0.1f;
+    far =100.0f;
+    fov = 45.0f;
+    aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
 
 }
 
@@ -230,7 +238,7 @@ void update(float dt)
     }
 }
 
-// call opengl draw functions
+// setup shader, texture and uniforms, then call mesh->render()
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -240,7 +248,7 @@ void display()
     shader->use();
     texture->use();
 
-    // update position
+    // rotate the pyrimid
     angle += d_angle;
 
     // model matrix
@@ -251,15 +259,14 @@ void display()
 
     // view matrix
     glm::mat4 view(1.0f);
-    view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 up(0.0f, 1.0f, 0.0f);
+    view = glm::lookAt(eye, eye + dir, up);
     glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
 
     // projection matrix
     glm::mat4 projection(1.0f);
-    GLfloat aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
-    projection = glm::perspective(45.0f, aspect_ratio, 0.1f, 100.0f);
+    projection = glm::perspective(fov, aspect_ratio, near, far);
     glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
-
 
     // ambient light
     light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
@@ -280,6 +287,7 @@ void display()
 // calls display() inside main loop
 int main(int argc, char *argv[])
 {
+    // init glfw
     if (!glfwInit()) {
         printf("could not init glfw\n");
         exit(1);
@@ -292,10 +300,10 @@ int main(int argc, char *argv[])
         glfwTerminate();
         exit(1);
     }
-    glfwMakeContextCurrent(window);
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    glfwMakeContextCurrent(window);
 
     // init glew
     if(glewInit() != GLEW_OK) {
