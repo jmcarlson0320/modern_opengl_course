@@ -7,11 +7,11 @@ Light::Light()
 }
 
 Light::Light(GLfloat r, GLfloat g, GLfloat b, GLfloat ambient_intensity,
-        GLfloat xDir, GLfloat yDir, GLfloat zDir, GLfloat diffuse_intensity)
+        glm::vec3 direction, GLfloat diffuse_intensity)
 {
     color = glm::vec3(r, g, b);
     this->ambient_intensity = ambient_intensity;
-    direction = glm::vec3(xDir, yDir, zDir);
+    this->direction = direction;
     this->diffuse_intensity = diffuse_intensity;
 }
 

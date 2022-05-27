@@ -167,7 +167,8 @@ void init()
     texture = new Texture("resources/textures/noise.png");
 
     // load light
-    light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
+    glm::vec3 light_direction(2.0f, -1.0f, -2.0f);
+    light = new Light(1.0f, 1.0f, 1.0f, 0.2f, light_direction, 1.0f);
 
     // load material
     shinyMaterial = new Material(1.0f, 32);
