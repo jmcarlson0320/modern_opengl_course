@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Mesh.h"
+#include "SimpleShader.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Light.h"
@@ -27,6 +28,7 @@ float angle = 0;
 float d_angle = 0.7;
 
 Mesh *mesh;
+SimpleShader *simpleShader;
 Shader *shader;
 Texture *texture;
 Light *light;
@@ -65,10 +67,10 @@ double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 // camera
 glm::vec3 eye;
 glm::vec3 dir;
-GLfloat near;
-GLfloat far;
 GLfloat fov;
 GLfloat aspect_ratio;
+GLfloat near;
+GLfloat far;
 
 void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
 {
@@ -160,6 +162,10 @@ void init()
     mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 44, mesh_index_data, 12);
 
     // load shaders
+
+    simpleShader = new SimpleShader();
+    simpleShader->fromFile("resources/shaders/default.vert", "resources/shaders/default.frag");
+
     shader = new Shader();
     shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
@@ -189,15 +195,14 @@ void init()
 
 void handleInput(GLFWwindow *window)
 {
-    double prev_x = mouse_input[X];
-    double prev_y = mouse_input[Y];
-
     glfwPollEvents();
 
     for (int i = 0; i < NUM_KEYBOARD_INPUTS; i++) {
         keyboard_input[i] = (glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS);
     }
 
+    double prev_x = mouse_input[X];
+    double prev_y = mouse_input[Y];
     glfwGetCursorPos(window, &mouse_input[X], &mouse_input[Y]);
     mouse_input[DX] = mouse_input[X] - prev_x;
     mouse_input[DY] = prev_y - mouse_input[Y];
@@ -258,16 +263,22 @@ void display()
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 
+    simpleShader->setUniformMat4("model", model);
+
     // view matrix
     glm::mat4 view(1.0f);
     glm::vec3 up(0.0f, 1.0f, 0.0f);
     view = glm::lookAt(eye, eye + dir, up);
     glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
 
+    simpleShader->setUniformMat4("view", view);
+
     // projection matrix
     glm::mat4 projection(1.0f);
     projection = glm::perspective(fov, aspect_ratio, near, far);
     glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
+
+    simpleShader->setUniformMat4("projection", projection);
 
     // ambient light
     light->UseLight(shader->getAmbientIntensityLocation(), shader->getLightColorLocation(), shader->getLightDirectionLocation(), shader->getLightIntensityLocation());
@@ -342,6 +353,7 @@ int main(int argc, char *argv[])
     glfwTerminate();
 
     delete mesh;
+    delete simpleShader;
     delete shader;
     delete texture;
 

@@ -16,9 +16,9 @@ class SimpleShader
         void use();
         void clear();
 
-        void setUniformFloat(char *name, float value);
-        void setUniformVec3(char *name, glm::vec3 value);
-        void setUniformMat4(char *name, glm::mat4 value);
+        void setUniformFloat(const char *name, float value);
+        void setUniformVec3(const char *name, glm::vec3 value);
+        void setUniformMat4(const char *name, glm::mat4 value);
 
     private:
         GLuint programID;

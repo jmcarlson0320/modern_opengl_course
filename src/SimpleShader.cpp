@@ -33,19 +33,19 @@ void SimpleShader::clear()
     glUseProgram(0);
 }
 
-void SimpleShader::setUniformFloat(char *name, float value)
+void SimpleShader::setUniformFloat(const char *name, float value)
 {
     GLuint uniformLocation = glGetUniformLocation(programID, name);
     glUniform1f(uniformLocation, value);
 }
 
-void SimpleShader::setUniformVec3(char *name, glm::vec3 value)
+void SimpleShader::setUniformVec3(const char *name, glm::vec3 value)
 {
     GLuint uniformLocation = glGetUniformLocation(programID, name);
     glUniform3f(uniformLocation, value.x, value.y, value.z);
 }
 
-void SimpleShader::setUniformMat4(char *name, glm::mat4 value)
+void SimpleShader::setUniformMat4(const char *name, glm::mat4 value)
 {
     GLuint uniformLocation = glGetUniformLocation(programID, name);
     glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(value));
