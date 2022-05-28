@@ -270,7 +270,7 @@ void display()
     glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
 
     // ambient light
-    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), shader->getDirectionLocation(), shader->getDiffuseIntensityLocation());
+    light->UseLight(shader->getAmbientIntensityLocation(), shader->getAmbientColorLocation(), shader->getDirectionLocation(), shader->getLightIntensityLocation());
 
     // specular material
     shinyMaterial->UseMaterial(shader->getSpecularIntensityLocation(), shader->getShininessLocation());
