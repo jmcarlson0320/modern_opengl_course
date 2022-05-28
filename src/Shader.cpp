@@ -9,7 +9,7 @@ Shader::Shader()
     uniformProjection = 0;
     uniformEyePosition = 0;
     uniformAmbientIntensity = 0;
-    uniformAmbientColor = 0;
+    uniformLightColor = 0;
     uniformLightIntensity = 0;
     uniformDirection = 0;
     uniformSpecularIntensity = 0;
@@ -36,7 +36,7 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     uniformEyePosition = glGetUniformLocation(shaderID, "eye");
     uniformAmbientIntensity = glGetUniformLocation(shaderID, "light.ambientIntensity");
-    uniformAmbientColor = glGetUniformLocation(shaderID, "light.color");
+    uniformLightColor = glGetUniformLocation(shaderID, "lightColor");
     uniformLightIntensity = glGetUniformLocation(shaderID, "light.intensity");
     uniformDirection = glGetUniformLocation(shaderID, "light.direction");
     uniformSpecularIntensity = glGetUniformLocation(shaderID, "material.specular_intensity");
@@ -69,9 +69,9 @@ GLuint Shader::getAmbientIntensityLocation()
     return uniformAmbientIntensity;
 }
 
-GLuint Shader::getAmbientColorLocation()
+GLuint Shader::getLightColorLocation()
 {
-    return uniformAmbientColor;
+    return uniformLightColor;
 }
 
 GLuint Shader::getLightIntensityLocation()

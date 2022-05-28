@@ -9,10 +9,8 @@ out vec4 color;
 
 struct LightSource
 {
-    vec3 color;
     vec3 direction;
     float intensity;
-    vec3 ambientColor;
     float ambientIntensity;
 };
 
@@ -24,16 +22,24 @@ struct Material
 
 uniform sampler2D theTexture;
 uniform LightSource light;
+
+// flatten the LightSource struct
+uniform vec3 lightColor;
+uniform vec3 lightDirection;
+uniform float lightIntensity;
+uniform vec3 ambientColor;
+uniform float ambientIntensity;
+
 uniform Material material;
 
 uniform vec3 eye;
 
 void main()
 {
-        vec4 ambientColor = vec4(light.color, 1.0f) * light.ambientIntensity;
+        vec4 ambientColor = vec4(lightColor, 1.0f) * light.ambientIntensity;
 
         float diffuseFactor = max(dot(normalize(vertex_normal), normalize(light.direction)), 0.0f);
-        vec4 diffuseColor = vec4(light.color, 1.0f) * light.intensity * diffuseFactor;
+        vec4 diffuseColor = vec4(lightColor, 1.0f) * light.intensity * diffuseFactor;
 
         vec4 specularColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -43,7 +49,7 @@ void main()
             float specularFactor = dot(fragToEye, reflection);
             if (specularFactor > 0.0f) {
                 specularFactor = pow(specularFactor, material.shininess);
-                specularColor = vec4((light.color * material.specular_intensity * specularFactor), 1.0f);
+                specularColor = vec4((lightColor * material.specular_intensity * specularFactor), 1.0f);
             }
         }
 

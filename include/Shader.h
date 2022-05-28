@@ -15,7 +15,7 @@ class Shader {
         GLuint getProjectionLocation();
         GLuint getEyePositionLocation();
         GLuint getAmbientIntensityLocation();
-        GLuint getAmbientColorLocation();
+        GLuint getLightColorLocation();
         GLuint getLightIntensityLocation();
         GLuint getDirectionLocation();
         GLuint getSpecularIntensityLocation();
@@ -31,7 +31,7 @@ class Shader {
         GLuint uniformProjection;
         GLuint uniformEyePosition;
         GLuint uniformAmbientIntensity;
-        GLuint uniformAmbientColor;
+        GLuint uniformLightColor;
         GLuint uniformLightIntensity;
         GLuint uniformDirection;
         GLuint uniformSpecularIntensity;
