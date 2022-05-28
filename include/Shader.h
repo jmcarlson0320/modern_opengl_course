@@ -17,7 +17,7 @@ class Shader {
         GLuint getAmbientIntensityLocation();
         GLuint getLightColorLocation();
         GLuint getLightIntensityLocation();
-        GLuint getDirectionLocation();
+        GLuint getLightDirectionLocation();
         GLuint getSpecularIntensityLocation();
         GLuint getShininessLocation();
 
@@ -33,7 +33,7 @@ class Shader {
         GLuint uniformAmbientIntensity;
         GLuint uniformLightColor;
         GLuint uniformLightIntensity;
-        GLuint uniformDirection;
+        GLuint uniformLightDirection;
         GLuint uniformSpecularIntensity;
         GLuint uniformShininess;
 

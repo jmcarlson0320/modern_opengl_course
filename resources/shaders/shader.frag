@@ -9,7 +9,6 @@ out vec4 color;
 
 struct LightSource
 {
-    vec3 direction;
     float intensity;
     float ambientIntensity;
 };
@@ -38,14 +37,14 @@ void main()
 {
         vec4 ambientColor = vec4(lightColor, 1.0f) * light.ambientIntensity;
 
-        float diffuseFactor = max(dot(normalize(vertex_normal), normalize(light.direction)), 0.0f);
+        float diffuseFactor = max(dot(normalize(vertex_normal), normalize(lightDirection)), 0.0f);
         vec4 diffuseColor = vec4(lightColor, 1.0f) * light.intensity * diffuseFactor;
 
         vec4 specularColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
         if (diffuseFactor > 0.0f) {
             vec3 fragToEye = normalize(eye - frag_pos);
-            vec3 reflection = normalize(reflect(light.direction, normalize(vertex_normal)));
+            vec3 reflection = normalize(reflect(lightDirection, normalize(vertex_normal)));
             float specularFactor = dot(fragToEye, reflection);
             if (specularFactor > 0.0f) {
                 specularFactor = pow(specularFactor, material.shininess);

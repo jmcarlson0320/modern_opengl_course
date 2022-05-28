@@ -11,7 +11,7 @@ Shader::Shader()
     uniformAmbientIntensity = 0;
     uniformLightColor = 0;
     uniformLightIntensity = 0;
-    uniformDirection = 0;
+    uniformLightDirection = 0;
     uniformSpecularIntensity = 0;
     uniformShininess = 0;
 }
@@ -38,7 +38,7 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     uniformAmbientIntensity = glGetUniformLocation(shaderID, "light.ambientIntensity");
     uniformLightColor = glGetUniformLocation(shaderID, "lightColor");
     uniformLightIntensity = glGetUniformLocation(shaderID, "light.intensity");
-    uniformDirection = glGetUniformLocation(shaderID, "light.direction");
+    uniformLightDirection = glGetUniformLocation(shaderID, "lightDirection");
     uniformSpecularIntensity = glGetUniformLocation(shaderID, "material.specular_intensity");
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess");
     clear();
@@ -79,9 +79,9 @@ GLuint Shader::getLightIntensityLocation()
     return uniformLightIntensity;
 }
 
-GLuint Shader::getDirectionLocation()
+GLuint Shader::getLightDirectionLocation()
 {
-    return uniformDirection;
+    return uniformLightDirection;
 }
 
 GLuint Shader::getSpecularIntensityLocation()
