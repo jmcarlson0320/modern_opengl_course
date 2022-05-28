@@ -35,9 +35,9 @@ void Shader::fromFile(const char *vertFilename, const char *fragFilename)
     uniformView = glGetUniformLocation(shaderID, "view");
     uniformProjection = glGetUniformLocation(shaderID, "projection");
     uniformEyePosition = glGetUniformLocation(shaderID, "eye");
-    uniformAmbientIntensity = glGetUniformLocation(shaderID, "light.ambientIntensity");
+    uniformAmbientIntensity = glGetUniformLocation(shaderID, "ambientIntensity");
     uniformLightColor = glGetUniformLocation(shaderID, "lightColor");
-    uniformLightIntensity = glGetUniformLocation(shaderID, "light.intensity");
+    uniformLightIntensity = glGetUniformLocation(shaderID, "lightIntensity");
     uniformLightDirection = glGetUniformLocation(shaderID, "lightDirection");
     uniformSpecularIntensity = glGetUniformLocation(shaderID, "material.specular_intensity");
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess");
