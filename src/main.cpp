@@ -130,7 +130,7 @@ void MessageCallback( GLenum source,
            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, severity, message );
 }
 
-// setup data and shaders for opengl draw calls
+// setup data and shaders
 void init()
 {
 //    enable debug output
