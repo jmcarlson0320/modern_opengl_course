@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 
 #include <GL/glew.h>
@@ -7,6 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
 
 #include "Mesh.h"
 #include "SimpleShader.h"
