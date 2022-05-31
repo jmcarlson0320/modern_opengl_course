@@ -1,4 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
 
 #include <stdio.h>
 
@@ -198,7 +197,6 @@ void init()
     far =100.0f;
     fov = 45.0f;
     aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
-
 }
 
 void handleInput(GLFWwindow *window)

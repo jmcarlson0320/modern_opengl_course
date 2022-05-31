@@ -10,6 +10,7 @@ SimpleShader::SimpleShader()
 
 SimpleShader::~SimpleShader()
 {
+    clear();
 }
 
 void SimpleShader::fromFile(const char *vertFilename, const char *fragFilename)
