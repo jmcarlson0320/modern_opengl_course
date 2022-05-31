@@ -70,15 +70,15 @@ GLfloat aspect_ratio;
 GLfloat near;
 GLfloat far;
 
-void useLight(SimpleShader *shader, Light *light)
+void setLight(SimpleShader *shader, Light *light)
 {
-    shader->setUniformFloat("ambientIntensity", light->ambient_intensity);
+    shader->setUniformFloat("ambientIntensity", light->ambient_amount);
     shader->setUniformVec3("lightColor", light->color);
-    shader->setUniformVec3("lightDirection", light->direction);
-    shader->setUniformFloat("lightIntensity", light->diffuse_intensity);
+    shader->setUniformFloat("lightIntensity", light->intensity);
+    shader->setUniformVec3("lightPosition", light->position);
 }
 
-void useMaterial(SimpleShader *shader, Material *material)
+void setMaterial(SimpleShader *shader, Material *material)
 {
     shader->setUniformFloat("material.specular_intensity", material->specular_intensity);
     shader->setUniformFloat("material.shininess", material->shininess);
@@ -181,8 +181,8 @@ void init()
     texture = new Texture("resources/textures/noise.png");
 
     // load light
-    glm::vec3 light_direction(2.0f, -1.0f, -2.0f);
-    light = new Light(1.0f, 1.0f, 1.0f, 0.2f, light_direction, 1.0f);
+    glm::vec3 light_position(10.0f, 0.0f, 0.0f);
+    light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 1.0f, light_position);
 
     // load material
     shinyMaterial = new Material(1.0f, 32);
@@ -283,10 +283,10 @@ void display()
     simpleShader->setUniformMat4("projection", projection);
 
     // ambient light
-    useLight(simpleShader, light);
+    setLight(simpleShader, light);
 
     // specular material
-    useMaterial(simpleShader, shinyMaterial);
+    setMaterial(simpleShader, shinyMaterial);
 
     // draw
     mesh->render();

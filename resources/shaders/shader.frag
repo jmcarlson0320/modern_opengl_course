@@ -16,7 +16,7 @@ struct Material
 uniform sampler2D theTexture;
 
 uniform vec3 lightColor;
-uniform vec3 lightDirection;
+uniform vec3 lightPosition;
 uniform float lightIntensity;
 uniform float ambientIntensity;
 
@@ -27,6 +27,8 @@ uniform vec3 eye;
 void main()
 {
     vec4 ambientColor = vec4(lightColor, 1.0f) * ambientIntensity;
+
+    vec3 lightDirection = lightPosition - frag_pos;
 
     float diffuseFactor = max(dot(normalize(vertex_normal), normalize(lightDirection)), 0.0f);
     vec4 diffuseColor = vec4(lightColor, 1.0f) * lightIntensity * diffuseFactor;
