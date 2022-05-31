@@ -12,10 +12,8 @@ class Material {
 
         ~Material();
 
-    private:
         GLfloat specular_intensity;
         GLfloat shininess;
-
 
 };
 

@@ -11,7 +11,6 @@
 
 #include "Mesh.h"
 #include "SimpleShader.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "Light.h"
 #include "Material.h"
@@ -29,7 +28,6 @@ float d_angle = 0.7;
 
 Mesh *mesh;
 SimpleShader *simpleShader;
-Shader *shader;
 Texture *texture;
 Light *light;
 Material *shinyMaterial;
@@ -71,6 +69,20 @@ GLfloat fov;
 GLfloat aspect_ratio;
 GLfloat near;
 GLfloat far;
+
+void useLight(SimpleShader *shader, Light *light)
+{
+    shader->setUniformFloat("ambientIntensity", light->ambient_intensity);
+    shader->setUniformVec3("lightColor", light->color);
+    shader->setUniformVec3("lightDirection", light->direction);
+    shader->setUniformFloat("lightIntensity", light->diffuse_intensity);
+}
+
+void useMaterial(SimpleShader *shader, Material *material)
+{
+    shader->setUniformFloat("material.specular_intensity", material->specular_intensity);
+    shader->setUniformFloat("material.shininess", material->shininess);
+}
 
 void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
 {
@@ -161,13 +173,9 @@ void init()
     // load mesh
     mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 44, mesh_index_data, 12);
 
-    // load shaders
-
+    // load shader
     simpleShader = new SimpleShader();
-    simpleShader->fromFile("resources/shaders/default.vert", "resources/shaders/default.frag");
-
-    shader = new Shader();
-    shader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
+    simpleShader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     // load texture
     texture = new Texture("resources/textures/noise.png");
@@ -251,7 +259,7 @@ void display()
 
     // render the pyrimid
     // activate shader
-    shader->use();
+    simpleShader->use();
     texture->use();
 
     // rotate the pyrimid
@@ -261,36 +269,30 @@ void display()
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-    glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-
     simpleShader->setUniformMat4("model", model);
 
     // view matrix
     glm::mat4 view(1.0f);
     glm::vec3 up(0.0f, 1.0f, 0.0f);
     view = glm::lookAt(eye, eye + dir, up);
-    glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
-
     simpleShader->setUniformMat4("view", view);
 
     // projection matrix
     glm::mat4 projection(1.0f);
     projection = glm::perspective(fov, aspect_ratio, near, far);
-    glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
-
     simpleShader->setUniformMat4("projection", projection);
 
     // ambient light
-    light->UseLight(shader->getAmbientIntensityLocation(), shader->getLightColorLocation(), shader->getLightDirectionLocation(), shader->getLightIntensityLocation());
+    useLight(simpleShader, light);
 
     // specular material
-    shinyMaterial->UseMaterial(shader->getSpecularIntensityLocation(), shader->getShininessLocation());
+    useMaterial(simpleShader, shinyMaterial);
 
     // draw
     mesh->render();
 
     // deactivate shader
-    shader->clear();
+    simpleShader->clear();
 }
 
 // glfw code in here
@@ -354,7 +356,6 @@ int main(int argc, char *argv[])
 
     delete mesh;
     delete simpleShader;
-    delete shader;
     delete texture;
 
     return 0;
