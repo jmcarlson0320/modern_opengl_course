@@ -15,6 +15,7 @@ class Mesh {
     public:
         Mesh();
         Mesh(GLfloat *vertex_data, GLuint vertex_data_size, GLuint *indices, GLuint index_count);
+        void fromFile(const char *filename);
         void render();
         ~Mesh();
     private:

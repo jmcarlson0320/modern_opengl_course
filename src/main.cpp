@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -149,6 +150,31 @@ void MessageCallback( GLenum source,
 // setup data and shaders
 void init()
 {
+    std::string inputfile = "resources/models/cube.obj";
+    tinyobj::ObjReaderConfig reader_config;
+    reader_config.mtl_search_path = "resources/models";
+
+    tinyobj::ObjReader reader;
+
+    if (!reader.ParseFromFile(inputfile, reader_config)) {
+        if (!reader.Error().empty()) {
+            std::cerr << "TinyObjReader: " << reader.Error();
+        }
+        exit(1);
+    }
+
+    if (!reader.Warning().empty()) {
+        std::cout << "TinyObjReader: " << reader.Warning();
+    }
+
+    std::vector<float> vertices = reader.GetAttrib().vertices;
+    std::vector<float> normals = reader.GetAttrib().normals;
+    std::vector<float> texcoords = reader.GetAttrib().texcoords;
+
+    std::cout << "number of vertices: " << vertices.size() / 3 << std::endl;
+    std::cout << "number of normals: " << normals.size() / 3 << std::endl;
+    std::cout << "number of texcoords: " << texcoords.size() / 2 << std::endl;
+
 //    enable debug output
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
