@@ -26,6 +26,7 @@ class BufferLayout
 
     private:
         std::vector<LayoutElem> elements;
+        unsigned int stride;
 };
 
 #endif // BUFFERLAYOUT_H
