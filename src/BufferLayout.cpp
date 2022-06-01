@@ -20,6 +20,17 @@ BufferLayout::~BufferLayout()
 
 void BufferLayout::addElem(ElemType type, unsigned int count)
 {
-    elements.push_back({type, count});
+    unsigned int offset = stride;
+    elements.push_back({type, count, offset});
     stride += elemSize[type] * count;
+}
+
+std::vector<LayoutElem> BufferLayout::getElements()
+{
+    return elements;
+}
+
+unsigned int BufferLayout::getStride()
+{
+    return stride;
 }

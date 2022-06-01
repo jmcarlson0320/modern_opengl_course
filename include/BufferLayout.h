@@ -14,6 +14,7 @@ enum ElemType {
 struct LayoutElem {
     ElemType type;
     unsigned int count;
+    unsigned int offset;
 };
 
 class BufferLayout
@@ -23,6 +24,8 @@ class BufferLayout
         ~BufferLayout();
 
         void addElem(ElemType type, unsigned int count);
+        std::vector<LayoutElem> getElements();
+        unsigned int getStride();
 
     private:
         std::vector<LayoutElem> elements;
