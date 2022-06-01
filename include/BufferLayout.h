@@ -14,7 +14,7 @@ enum ElemType {
 struct LayoutElem {
     ElemType type;
     unsigned int count;
-    unsigned int offset;
+    unsigned long int offset;
 };
 
 class BufferLayout

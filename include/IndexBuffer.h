@@ -14,6 +14,7 @@ class IndexBuffer
 
     private:
         GLuint bufferID;
+        unsigned int num_indices;
 };
 
 #endif // INDEXBUFFER_H
