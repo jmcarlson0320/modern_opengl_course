@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+#include "BufferLayout.h"
+
 class VertexBuffer
 {
     public:
@@ -12,8 +14,12 @@ class VertexBuffer
         void bind();
         void unbind();
 
+        void setLayout(BufferLayout layout);
+        BufferLayout getLayout();
+
     private:
         GLuint bufferID;
+        BufferLayout layout;
 };
 
 #endif // VERTEXBUFFER_H

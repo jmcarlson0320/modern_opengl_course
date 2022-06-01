@@ -17,6 +17,7 @@
 #include "Texture.h"
 #include "Light.h"
 #include "Material.h"
+#include "BufferLayout.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
