@@ -20,8 +20,9 @@ BufferLayout::~BufferLayout()
 
 void BufferLayout::addElem(ElemType type, unsigned int count)
 {
+    unsigned int num_floats = elemSize[type] / sizeof(float) * count;
     unsigned int offset = stride;
-    elements.push_back({type, count, offset});
+    elements.push_back({type, num_floats, offset});
     stride += elemSize[type] * count;
 }
 

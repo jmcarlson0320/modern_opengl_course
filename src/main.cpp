@@ -12,7 +12,9 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
-#include "Mesh.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
 #include "SimpleShader.h"
 #include "Texture.h"
 #include "Light.h"
@@ -30,12 +32,15 @@ float dx = 0.01;
 float angle = 0;
 float d_angle = 0.7;
 
-Mesh *mesh;
 SimpleShader *simpleShader;
 Texture *texture;
 Light *light;
 Material *shinyMaterial;
 Material *dullMaterial;
+
+VertexBuffer *vertexBuffer;
+IndexBuffer *indexBuffer;
+VertexArray *vertexArray;
 
 // user input
 enum KEYBOARD_INPUTS {
@@ -199,8 +204,20 @@ void init()
 
     calcAvgNormals(mesh_index_data, 12, mesh_vertex_data, 44, 11, 3);
 
-    // load mesh
-    mesh = new Mesh(mesh_vertex_data, sizeof(mesh_vertex_data[0]) * 44, mesh_index_data, 12);
+    // load vertex data
+    vertexBuffer = new VertexBuffer(mesh_vertex_data, 44);
+    indexBuffer = new IndexBuffer(mesh_index_data, 12);
+    vertexArray = new VertexArray();
+
+    BufferLayout layout;
+    layout.addElem(VEC3, 1); // position
+    layout.addElem(VEC3, 1); // normal
+    layout.addElem(VEC3, 1); // color
+    layout.addElem(VEC2, 1); // texcoord
+
+    vertexBuffer->setLayout(layout);
+    vertexArray->addVertexBuffer(vertexBuffer);
+    vertexArray->addIndexBuffer(indexBuffer);
 
     // load shader
     simpleShader = new SimpleShader();
@@ -317,7 +334,9 @@ void display()
     setMaterial(simpleShader, shinyMaterial);
 
     // draw
-    mesh->render();
+    vertexArray->bind();
+    indexBuffer->bind();
+    glDrawElements(GL_TRIANGLES, indexBuffer->getIndexCount(), GL_UNSIGNED_INT, 0);
 
     // deactivate shader
     simpleShader->clear();
@@ -382,7 +401,6 @@ int main(int argc, char *argv[])
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    delete mesh;
     delete simpleShader;
     delete texture;
 

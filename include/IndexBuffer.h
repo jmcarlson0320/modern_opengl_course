@@ -12,6 +12,8 @@ class IndexBuffer
         void bind();
         void unbind();
 
+        unsigned int getIndexCount();
+
     private:
         GLuint bufferID;
         unsigned int num_indices;

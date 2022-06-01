@@ -45,6 +45,5 @@ void VertexArray::addIndexBuffer(IndexBuffer *indexBuffer)
 {
     bind();
     indexBuffer->bind();
-    indexBuffer->unbind();
     unbind();
 }
