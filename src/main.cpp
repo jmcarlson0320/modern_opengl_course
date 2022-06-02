@@ -79,20 +79,6 @@ GLfloat aspect_ratio;
 GLfloat near;
 GLfloat far;
 
-void setLight(SimpleShader *shader, Light *light)
-{
-    shader->setUniformFloat("ambientIntensity", light->ambient_amount);
-    shader->setUniformVec3("lightColor", light->color);
-    shader->setUniformFloat("lightIntensity", light->intensity);
-    shader->setUniformVec3("lightPosition", light->position);
-}
-
-void setMaterial(SimpleShader *shader, Material *material)
-{
-    shader->setUniformFloat("material.specular_intensity", material->specular_intensity);
-    shader->setUniformFloat("material.shininess", material->shininess);
-}
-
 void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
 {
     for (unsigned int i = 0; i < num_indices; i += 3) {
@@ -210,27 +196,23 @@ void init()
     vertexArray = new VertexArray();
 
     BufferLayout layout;
-    layout.addElem(VEC3, 1); // position
-    layout.addElem(VEC3, 1); // normal
-    layout.addElem(VEC3, 1); // color
-    layout.addElem(VEC2, 1); // texcoord
-
+    layout.addElem(FLOAT, 3); // position
+    layout.addElem(FLOAT, 3); // normal
+    layout.addElem(FLOAT, 3); // color
+    layout.addElem(FLOAT, 2); // texcoord
     vertexBuffer->setLayout(layout);
+
     vertexArray->addVertexBuffer(vertexBuffer);
     vertexArray->addIndexBuffer(indexBuffer);
 
-    // load shader
     simpleShader = new SimpleShader();
     simpleShader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
-    // load texture
     texture = new Texture("resources/textures/noise.png");
 
-    // load light
     glm::vec3 light_position(10.0f, 0.0f, 0.0f);
     light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 1.0f, light_position);
 
-    // load material
     shinyMaterial = new Material(1.0f, 32);
     dullMaterial = new Material(0.3f, 4);
 
@@ -297,49 +279,40 @@ void update(float dt)
     }
 }
 
-// setup shader, texture and uniforms, then call mesh->render()
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // render the pyrimid
-    // activate shader
     simpleShader->use();
     texture->use();
 
     // rotate the pyrimid
     angle += d_angle;
 
-    // model matrix
+    // build matrices
     glm::mat4 model(1.0f);
+    glm::mat4 view(1.0f);
+    glm::mat4 projection(1.0f);
+
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-    simpleShader->setUniformMat4("model", model);
-
-    // view matrix
-    glm::mat4 view(1.0f);
-    glm::vec3 up(0.0f, 1.0f, 0.0f);
-    view = glm::lookAt(eye, eye + dir, up);
-    simpleShader->setUniformMat4("view", view);
-
-    // projection matrix
-    glm::mat4 projection(1.0f);
+    view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
     projection = glm::perspective(fov, aspect_ratio, near, far);
+
+    // set uniforms
+    simpleShader->setUniformMat4("model", model);
+    simpleShader->setUniformMat4("view", view);
     simpleShader->setUniformMat4("projection", projection);
-
-    // ambient light
-    setLight(simpleShader, light);
-
-    // specular material
-    setMaterial(simpleShader, shinyMaterial);
+    simpleShader->setUniformFloat("ambientIntensity", light->ambient_amount);
+    simpleShader->setUniformVec3("lightColor", light->color);
+    simpleShader->setUniformFloat("lightIntensity", light->intensity);
+    simpleShader->setUniformVec3("lightPosition", light->position);
+    simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
+    simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
 
     // draw
     vertexArray->bind();
-    indexBuffer->bind();
     glDrawElements(GL_TRIANGLES, indexBuffer->getIndexCount(), GL_UNSIGNED_INT, 0);
-
-    // deactivate shader
-    simpleShader->clear();
 }
 
 // glfw code in here
