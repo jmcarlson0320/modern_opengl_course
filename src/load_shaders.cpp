@@ -69,15 +69,6 @@ GLuint load_shaders(shader_info *shaders)
         return 0;
     }
 
-    // validate program
-    glValidateProgram(program);
-    glGetProgramiv(program, GL_VALIDATE_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(program, MAX_LOG_LENGTH, NULL, err_msg);
-        printf("could not validate shader program\n%s", err_msg);
-        return 0;
-    }
-
     return program;
 }
 

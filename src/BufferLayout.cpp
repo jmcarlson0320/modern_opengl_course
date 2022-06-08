@@ -22,7 +22,12 @@ void BufferLayout::addElem(ElemType type, unsigned int count)
 {
     unsigned int num_floats = elemSize[type] / sizeof(float) * count;
     unsigned int offset = stride;
-    elements.push_back({type, num_floats, offset});
+    struct LayoutElem new_elem = {
+        type,
+        num_floats,
+        offset
+    };
+    elements.push_back(new_elem);
     stride += elemSize[type] * count;
 }
 

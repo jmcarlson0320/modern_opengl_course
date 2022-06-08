@@ -8,7 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
@@ -209,6 +208,7 @@ void init()
     simpleShader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     texture = new Texture("resources/textures/noise.png");
+    texture->use();
 
     glm::vec3 light_position(10.0f, 0.0f, 0.0f);
     light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 1.0f, light_position);
@@ -226,6 +226,14 @@ void init()
     far =100.0f;
     fov = 45.0f;
     aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
+
+    simpleShader->use();
+    simpleShader->setUniformFloat("ambientIntensity", light->ambient_amount);
+    simpleShader->setUniformVec3("lightColor", light->color);
+    simpleShader->setUniformFloat("lightIntensity", light->intensity);
+    simpleShader->setUniformVec3("lightPosition", light->position);
+    simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
+    simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
 }
 
 void handleInput(GLFWwindow *window)
@@ -283,32 +291,20 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    simpleShader->use();
-    texture->use();
-
     // rotate the pyrimid
     angle += d_angle;
 
     // build matrices
     glm::mat4 model(1.0f);
-    glm::mat4 view(1.0f);
-    glm::mat4 projection(1.0f);
-
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-    view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
-    projection = glm::perspective(fov, aspect_ratio, near, far);
+    glm::mat4 view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 projection = glm::perspective(fov, aspect_ratio, near, far);
 
     // set uniforms
     simpleShader->setUniformMat4("model", model);
     simpleShader->setUniformMat4("view", view);
     simpleShader->setUniformMat4("projection", projection);
-    simpleShader->setUniformFloat("ambientIntensity", light->ambient_amount);
-    simpleShader->setUniformVec3("lightColor", light->color);
-    simpleShader->setUniformFloat("lightIntensity", light->intensity);
-    simpleShader->setUniformVec3("lightPosition", light->position);
-    simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
-    simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
 
     // draw
     vertexArray->bind();
@@ -327,6 +323,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
     // setup window and opengl context
     GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "test window", NULL, NULL);
     if (!window) {
@@ -340,6 +341,7 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
 
     // init glew
+    glewExperimental = GL_TRUE;
     if(glewInit() != GLEW_OK) {
         printf("could not init glew\n");
         glfwDestroyWindow(window);

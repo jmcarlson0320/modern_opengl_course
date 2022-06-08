@@ -29,7 +29,7 @@ void VertexArray::addVertexBuffer(VertexBuffer *vertexBuffer)
     bind();
     vertexBuffer->bind();
     BufferLayout layout = vertexBuffer->getLayout();
-    auto elements = layout.getElements();
+    std::vector<LayoutElem> elements = layout.getElements();
     for (long unsigned int i = 0; i < elements.size(); i++) {
         LayoutElem cur_elem = elements[i];
         glVertexAttribPointer((unsigned int) i, cur_elem.count, GL_FLOAT, GL_FALSE, layout.getStride(), (const void *) cur_elem.offset);

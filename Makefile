@@ -8,10 +8,10 @@ EXE = $(BIN_DIR)/app
 SRC = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-CPPFLAGS = -Iinclude -I$(LIB_DIR)
+CPPFLAGS = -Iinclude -I$(LIB_DIR) -I/opt/homebrew/include
 CXXFLAGS = -Wall -g
 LDFLAGS = -L$(LIB_DIR)
-LDLIBS = -lGL -lGLEW -lglfw
+LDLIBS = -lGLEW -lglfw -L/opt/homebrew/lib -framework Cocoa -framework OpenGL -framework IOkit
 
 .PHONY: all clean
 
