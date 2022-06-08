@@ -171,13 +171,15 @@ void init()
 //    glDebugMessageCallback(MessageCallback, 0);
 
     GLfloat mesh_vertex_data[] = {
-    //   pos                normal            color             texture
-    //   x      y     z     nx    ny    nz    r     g     b     u     v
-        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f,
-         1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-         0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f
+    //   pos                normal            texture
+    //   x      y     z     nx    ny    nz     u     v
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f,
+         1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  1.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f
     };
+
+    unsigned int size_mesh_vertex_data= sizeof(mesh_vertex_data) / sizeof(mesh_vertex_data[0]);
 
     // index data
     unsigned int mesh_index_data[] = {
@@ -187,17 +189,29 @@ void init()
         1, 3, 2
     };
 
-    calcAvgNormals(mesh_index_data, 12, mesh_vertex_data, 44, 11, 3);
+    unsigned int size_mesh_index_data= sizeof(mesh_index_data) / sizeof(mesh_index_data[0]);
+
+    calcAvgNormals(mesh_index_data, size_mesh_index_data, mesh_vertex_data, size_mesh_vertex_data, 8, 3);
+    /*
+    typedef struct MeshData {
+        std::vector<float> vertices;
+        std::vector<float> indices;
+    };
+
+    MeshData meshData = load_obj("resources/models/myModel.obj");
+    vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
+    indexBuffer = new IndexBuffer(meshData.indices.data(), meshData.indices.size());
+
+    */
 
     // load vertex data
-    vertexBuffer = new VertexBuffer(mesh_vertex_data, 44);
+    vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
     indexBuffer = new IndexBuffer(mesh_index_data, 12);
     vertexArray = new VertexArray();
 
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
     layout.addElem(FLOAT, 3); // normal
-    layout.addElem(FLOAT, 3); // color
     layout.addElem(FLOAT, 2); // texcoord
     vertexBuffer->setLayout(layout);
 

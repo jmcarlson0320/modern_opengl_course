@@ -1,9 +1,8 @@
 #version 330
 
-in vec3 vertex_color;
-in vec2 vertex_texture_coor;
-in vec3 vertex_normal;
 in vec3 frag_pos;
+in vec3 vertex_normal;
+in vec2 vertex_texture_coor;
 
 out vec4 color;
 
