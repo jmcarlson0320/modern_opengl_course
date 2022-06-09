@@ -8,9 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -19,6 +16,7 @@
 #include "Light.h"
 #include "Material.h"
 #include "BufferLayout.h"
+#include "load_obj.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -73,6 +71,8 @@ double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 // camera
 glm::vec3 eye;
 glm::vec3 dir;
+
+// for perspective matrix
 GLfloat fov;
 GLfloat aspect_ratio;
 GLfloat near;
@@ -141,44 +141,19 @@ void MessageCallback( GLenum source,
 // setup data and shaders
 void init()
 {
-    std::string inputfile = "resources/models/cube.obj";
-    tinyobj::ObjReaderConfig reader_config;
-    reader_config.mtl_search_path = "resources/models";
-
-    tinyobj::ObjReader reader;
-
-    if (!reader.ParseFromFile(inputfile, reader_config)) {
-        if (!reader.Error().empty()) {
-            std::cerr << "TinyObjReader: " << reader.Error();
-        }
-        exit(1);
-    }
-
-    if (!reader.Warning().empty()) {
-        std::cout << "TinyObjReader: " << reader.Warning();
-    }
-
-    std::vector<float> vertices = reader.GetAttrib().vertices;
-    std::vector<float> normals = reader.GetAttrib().normals;
-    std::vector<float> texcoords = reader.GetAttrib().texcoords;
-
-    std::cout << "number of vertices: " << vertices.size() / 3 << std::endl;
-    std::cout << "number of normals: " << normals.size() / 3 << std::endl;
-    std::cout << "number of texcoords: " << texcoords.size() / 2 << std::endl;
 
 //    enable debug output
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
 
     GLfloat mesh_vertex_data[] = {
-    //   pos                normal            texture
-    //   x      y     z     nx    ny    nz     u     v
+    //   pos                 normal           texture
+    //   x      y     z      nx    ny    nz    u     v
         -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
          0.0f, -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f,
          1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
          0.0f,  1.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f
     };
-
     unsigned int size_mesh_vertex_data= sizeof(mesh_vertex_data) / sizeof(mesh_vertex_data[0]);
 
     // index data
@@ -188,26 +163,26 @@ void init()
         0, 3, 1,
         1, 3, 2
     };
-
     unsigned int size_mesh_index_data= sizeof(mesh_index_data) / sizeof(mesh_index_data[0]);
 
     calcAvgNormals(mesh_index_data, size_mesh_index_data, mesh_vertex_data, size_mesh_vertex_data, 8, 3);
+
     /*
     typedef struct MeshData {
         std::vector<float> vertices;
         std::vector<float> indices;
     };
+    */
 
-    MeshData meshData = load_obj("resources/models/myModel.obj");
+    MeshData meshData = load_obj("resources/models/cube.obj");
     vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
     indexBuffer = new IndexBuffer(meshData.indices.data(), meshData.indices.size());
 
-    */
-
     // load vertex data
-    vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
-    indexBuffer = new IndexBuffer(mesh_index_data, 12);
-    vertexArray = new VertexArray();
+    //vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
+    //indexBuffer = new IndexBuffer(mesh_index_data, 12);
+    //vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
+    //indexBuffer = new IndexBuffer(mesh_index_data, 12);
 
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
@@ -215,6 +190,7 @@ void init()
     layout.addElem(FLOAT, 2); // texcoord
     vertexBuffer->setLayout(layout);
 
+    vertexArray = new VertexArray();
     vertexArray->addVertexBuffer(vertexBuffer);
     vertexArray->addIndexBuffer(indexBuffer);
 
@@ -299,14 +275,14 @@ void update(float dt)
     if (keyboard_input[RIGHT]) {
         eye = eye + right * 0.05f;
     }
+    
+    // rotate the pyrimid
+    angle += d_angle;
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // rotate the pyrimid
-    angle += d_angle;
 
     // build matrices
     glm::mat4 model(1.0f);
@@ -337,6 +313,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    // specify the opengl version
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -349,9 +326,13 @@ int main(int argc, char *argv[])
         glfwTerminate();
         exit(1);
     }
+
+    // keyboard and mouse settings
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    // use the window's opengl context
     glfwMakeContextCurrent(window);
 
     // init glew
@@ -367,7 +348,7 @@ int main(int argc, char *argv[])
     init();
 
     // main loop
-    // float last = get_time();
+    // float last = get_time();     // timing not implemented yet
     float last = 0.0f;
     while(!glfwWindowShouldClose(window)) {
         // float cur = get_time();
