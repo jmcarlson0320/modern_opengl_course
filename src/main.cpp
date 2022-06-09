@@ -174,7 +174,7 @@ void init()
     };
     */
 
-    MeshData meshData = load_obj("resources/models/cube.obj");
+    MeshData meshData = load_obj("resources/models/teapot.obj");
     vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
     indexBuffer = new IndexBuffer(meshData.indices.data(), meshData.indices.size());
 
@@ -187,7 +187,6 @@ void init()
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
     layout.addElem(FLOAT, 3); // normal
-    layout.addElem(FLOAT, 2); // texcoord
     vertexBuffer->setLayout(layout);
 
     vertexArray = new VertexArray();
