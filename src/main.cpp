@@ -78,6 +78,8 @@ GLfloat aspect_ratio;
 GLfloat near;
 GLfloat far;
 
+void update(float dt);
+
 void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
 {
     for (unsigned int i = 0; i < num_indices; i += 3) {
@@ -146,49 +148,18 @@ void init()
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
 
-    GLfloat mesh_vertex_data[] = {
-    //   pos                 normal           texture
-    //   x      y     z      nx    ny    nz    u     v
-        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f,
-         1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f,  1.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f
-    };
-    unsigned int size_mesh_vertex_data= sizeof(mesh_vertex_data) / sizeof(mesh_vertex_data[0]);
-
-    // index data
-    unsigned int mesh_index_data[] = {
-        0, 1, 2,
-        2, 3, 0,
-        0, 3, 1,
-        1, 3, 2
-    };
-    unsigned int size_mesh_index_data= sizeof(mesh_index_data) / sizeof(mesh_index_data[0]);
-
-    calcAvgNormals(mesh_index_data, size_mesh_index_data, mesh_vertex_data, size_mesh_vertex_data, 8, 3);
-
-    /*
-    typedef struct MeshData {
-        std::vector<float> vertices;
-        std::vector<float> indices;
-    };
-    */
-
+    // load obj file contents into vertex buffer and index buffer
     MeshData meshData = load_obj("resources/models/teapot.obj");
     vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
     indexBuffer = new IndexBuffer(meshData.indices.data(), meshData.indices.size());
 
-    // load vertex data
-    //vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
-    //indexBuffer = new IndexBuffer(mesh_index_data, 12);
-    //vertexBuffer = new VertexBuffer(mesh_vertex_data, size_mesh_vertex_data);
-    //indexBuffer = new IndexBuffer(mesh_index_data, 12);
-
+    // define the vertex layout
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
     layout.addElem(FLOAT, 3); // normal
     vertexBuffer->setLayout(layout);
 
+    // assemble the vertex array object
     vertexArray = new VertexArray();
     vertexArray->addVertexBuffer(vertexBuffer);
     vertexArray->addIndexBuffer(indexBuffer);
@@ -223,6 +194,8 @@ void init()
     simpleShader->setUniformVec3("lightPosition", light->position);
     simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
     simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
+
+    update(0.0f);
 }
 
 void handleInput(GLFWwindow *window)
