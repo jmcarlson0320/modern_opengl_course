@@ -1,2 +1,4 @@
 # TODO
-# modern_opengl_course
+# Modern OpenGL Course
+
+## Intro
