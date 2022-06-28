@@ -183,7 +183,7 @@ void init()
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
     near = 0.1f;
-    far =100.0f;
+    far = 100.0f;
     fov = 45.0f;
     aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
 
