@@ -1,4 +1,4 @@
-#version 410
+#version 410 core
 
 in vec3 frag_pos;
 in vec3 vertex_normal;
