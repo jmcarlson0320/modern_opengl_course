@@ -36,7 +36,9 @@ VertexBuffer *vertexBuffer;
 IndexBuffer *indexBuffer;
 VertexArray *vertexArray;
 
-// user input
+/*****************************************************************************************
+* User Input
+****************************************************************************************/
 enum KEYBOARD_INPUTS {
     FORWARD,
     BACK,
@@ -65,63 +67,17 @@ int KEY_MAP[NUM_KEYBOARD_INPUTS] = {
 bool keyboard_input[NUM_KEYBOARD_INPUTS] = {0};
 double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 
-// camera
+void handleInput(GLFWwindow *window);
+
+/*****************************************************************************************
+* Camera
+****************************************************************************************/
 glm::vec3 eye;
 glm::vec3 dir;
 GLfloat fov;
 GLfloat aspect_ratio;
 GLfloat near;
 GLfloat far;
-
-void update(float dt);
-
-void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *vertices, unsigned int num_vertices, unsigned int vertex_length, unsigned int normal_offset)
-{
-    for (unsigned int i = 0; i < num_indices; i += 3) {
-        // initialize indices to position of vertices
-        unsigned int index_v0 = indices[i] * vertex_length;
-        unsigned int index_v1 = indices[i + 1] * vertex_length;
-        unsigned int index_v2 = indices[i + 2] * vertex_length;
-
-        // calculate the normal of the triangle defined by v0, v1, v2
-        glm::vec3 edge_01(vertices[index_v1] - vertices[index_v0], vertices[index_v1 + 1] - vertices[index_v0 + 1], vertices[index_v1 + 2] - vertices[index_v0 + 2]);
-        glm::vec3 edge_02(vertices[index_v2] - vertices[index_v0], vertices[index_v2 + 1] - vertices[index_v0 + 1], vertices[index_v2 + 2] - vertices[index_v0 + 2]);
-        glm::vec3 normal_012 = glm::cross(edge_01, edge_02);
-        normal_012 = glm::normalize(normal_012);
-
-        // point indices to normal of vertices
-        index_v0 += normal_offset;
-        index_v1 += normal_offset;
-        index_v2 += normal_offset;
-
-        // add the triangle normal to each vertex normal
-        // v0
-        vertices[index_v0] += normal_012.x;
-        vertices[index_v0 + 1] += normal_012.y;
-        vertices[index_v0 + 2] += normal_012.z;
-
-        // v1
-        vertices[index_v1] += normal_012.x;
-        vertices[index_v1 + 1] += normal_012.y;
-        vertices[index_v1 + 2] += normal_012.z;
-
-        // v2
-        vertices[index_v2] += normal_012.x;
-        vertices[index_v2 + 1] += normal_012.y;
-        vertices[index_v2 + 2] += normal_012.z;
-    }
-
-    // vertex normals now hold the sum of the normals of the surfaces dependent on that vertex
-    // finally we normalize the normals
-    for (unsigned int i = 0; i < num_vertices / vertex_length; i++) {
-        unsigned int cur_normal_offset = i * vertex_length + normal_offset;
-        glm::vec3 v(vertices[cur_normal_offset], vertices[cur_normal_offset + 1], vertices[cur_normal_offset + 2]);
-        v = glm::normalize(v);
-        vertices[cur_normal_offset] = v.x;
-        vertices[cur_normal_offset + 1] = v.y;
-        vertices[cur_normal_offset + 2] = v.z;
-    }
-}
 
 // setup data and shaders
 void init()
@@ -131,6 +87,9 @@ void init()
 //    glEnable(GL_DEBUG_OUTPUT);
 //    glDebugMessageCallback(MessageCallback, 0);
 
+    /*****************************************************************************************
+    * Load Model
+    ****************************************************************************************/
     // load obj file contents into vertex buffer and index buffer
     MeshData meshData = load_obj("resources/models/teapot.obj");
     vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
@@ -147,22 +106,33 @@ void init()
     vertexArray->addVertexBuffer(vertexBuffer);
     vertexArray->addIndexBuffer(indexBuffer);
 
+    /*****************************************************************************************
+    * Load Shaders
+    ****************************************************************************************/
     simpleShader = new SimpleShader();
     simpleShader->fromFile("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
+    /*****************************************************************************************
+    * Load Textures
+    ****************************************************************************************/
     texture = new Texture("resources/textures/noise.png");
     texture->use();
 
+    /*****************************************************************************************
+    * Init Light Source
+    ****************************************************************************************/
     glm::vec3 light_position(10.0f, 0.0f, 0.0f);
     light = new Light(1.0f, 1.0f, 1.0f, 0.2f, 1.0f, light_position);
 
+    /*****************************************************************************************
+    * Init Materials
+    ****************************************************************************************/
     shinyMaterial = new Material(1.0f, 32);
     dullMaterial = new Material(0.3f, 4);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-
-    // init camera
+    /*****************************************************************************************
+    * Init Camera
+    ****************************************************************************************/
     eye = glm::vec3(0.0f, 0.0f, 1.0f);
     dir = glm::vec3(0.0f, 0.0f, -1.0f);
     near = 0.1f;
@@ -170,6 +140,9 @@ void init()
     fov = 45.0f;
     aspect_ratio = (GLfloat) WIDTH / (GLfloat) HEIGHT;
 
+    /*****************************************************************************************
+    * Set Uniforms for Light and Material
+    ****************************************************************************************/
     simpleShader->use();
     simpleShader->setUniformFloat("ambientIntensity", light->ambient_amount);
     simpleShader->setUniformVec3("lightColor", light->color);
@@ -178,7 +151,15 @@ void init()
     simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
     simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
 
-    update(0.0f);
+    /*****************************************************************************************
+    * Set Background Color
+    ****************************************************************************************/
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    /*****************************************************************************************
+    * Enable Depth Test
+    ****************************************************************************************/
+    glEnable(GL_DEPTH_TEST);
 }
 
 void handleInput(GLFWwindow *window)
@@ -198,7 +179,9 @@ void handleInput(GLFWwindow *window)
 
 void update(float dt)
 {
-    // update camera
+    /*****************************************************************************************
+    * Update Camera Angle
+    ****************************************************************************************/
     // get forward and right vectors from view direction
     glm::vec3 forward = glm::vec3(dir.x, 0.0f, dir.z);
     glm::vec3 right = glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -217,7 +200,9 @@ void update(float dt)
     glm::vec4 dir_homog = rotate_y * rotate_x * glm::vec4(dir, 1.0f);
     dir = glm::vec3(dir_homog);
 
-    // move camera position
+    /*****************************************************************************************
+    * Update Camera Position
+    ****************************************************************************************/
     if (keyboard_input[FORWARD]) {
         eye = eye + forward * 0.05f;
     }
@@ -231,7 +216,9 @@ void update(float dt)
         eye = eye + right * 0.05f;
     }
     
-    // rotate the pyrimid
+    /*****************************************************************************************
+    * Rotate the scene
+    ****************************************************************************************/
     angle += d_angle;
 }
 
@@ -239,19 +226,30 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // build matrices
+    /*****************************************************************************************
+    * Build MVP Matrices
+    ****************************************************************************************/
+    // model
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // view
     glm::mat4 view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // projection
     glm::mat4 projection = glm::perspective(fov, aspect_ratio, near, far);
 
-    // set uniforms
+    /*****************************************************************************************
+    * Send Matrices to Shader
+    ****************************************************************************************/
     simpleShader->setUniformMat4("model", model);
     simpleShader->setUniformMat4("view", view);
     simpleShader->setUniformMat4("projection", projection);
 
-    // draw
+    /*****************************************************************************************
+    * Draw Model
+    ****************************************************************************************/
     vertexArray->bind();
     glDrawElements(GL_TRIANGLES, indexBuffer->getIndexCount(), GL_UNSIGNED_INT, 0);
 }
@@ -301,6 +299,7 @@ int main(int argc, char *argv[])
 
     // setup triangle data and shaders
     init();
+    update(0.0f);
 
     // main loop
     // float last = get_time();     // timing not implemented yet
