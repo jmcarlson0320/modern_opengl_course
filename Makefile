@@ -10,8 +10,8 @@ OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 CPPFLAGS = -Iinclude -I$(LIB_DIR) -I/opt/homebrew/include
 CXXFLAGS = -Wall -g
-LDFLAGS = -L$(LIB_DIR)
-LDLIBS = -lGLEW -lglfw -L/opt/homebrew/lib -framework OpenGL
+LDFLAGS = -L$(LIB_DIR) -L/opt/homebrew/lib
+LDLIBS = -lGLEW -lglfw -framework OpenGL
 
 .PHONY: all clean
 
