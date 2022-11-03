@@ -23,9 +23,6 @@
 
 #define TO_RADIANS(x) (x * 3.14159265f / 180.0f)
 
-// triangle parameters
-float x_offset = 0;
-float dx = 0.01;
 float angle = 0;
 float d_angle = 0.7;
 
@@ -71,8 +68,6 @@ double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
 // camera
 glm::vec3 eye;
 glm::vec3 dir;
-
-// for perspective matrix
 GLfloat fov;
 GLfloat aspect_ratio;
 GLfloat near;
@@ -126,18 +121,6 @@ void calcAvgNormals(unsigned int *indices, unsigned int num_indices, GLfloat *ve
         vertices[cur_normal_offset + 1] = v.y;
         vertices[cur_normal_offset + 2] = v.z;
     }
-}
-
-void MessageCallback( GLenum source,
-                      GLenum type,
-                      GLuint id,
-                      GLenum severity,
-                      GLsizei length,
-                      const GLchar* message,
-                      const void* userParam )
-{
-    fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, severity, message );
 }
 
 // setup data and shaders
