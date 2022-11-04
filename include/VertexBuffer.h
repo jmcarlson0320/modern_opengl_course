@@ -8,6 +8,7 @@
 class VertexBuffer
 {
     public:
+        VertexBuffer();
         VertexBuffer(float *data, unsigned int num_elem);
         ~VertexBuffer();
 

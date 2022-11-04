@@ -2,6 +2,12 @@
 
 #include <GL/glew.h>
 
+VertexBuffer::VertexBuffer()
+    : bufferID(0)
+{
+    // using initializer lists
+}
+
 VertexBuffer::VertexBuffer(float *data, unsigned int num_elem)
 {
     glGenBuffers(1, &bufferID);

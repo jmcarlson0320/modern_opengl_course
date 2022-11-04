@@ -2,6 +2,12 @@
 
 #include <GL/glew.h>
 
+IndexBuffer::IndexBuffer()
+    : bufferID(0), num_indices(0)
+{
+    // using initializer lists
+}
+
 IndexBuffer::IndexBuffer(unsigned int *data, unsigned int num_elem)
 {
     glGenBuffers(1, &bufferID);

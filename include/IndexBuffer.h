@@ -6,6 +6,7 @@
 class IndexBuffer
 {
     public:
+        IndexBuffer();
         IndexBuffer(unsigned int *data, unsigned int num_elem);
         ~IndexBuffer();
 

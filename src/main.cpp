@@ -170,9 +170,14 @@ void handleInput(GLFWwindow *window)
         keyboard_input[i] = (glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS);
     }
 
+    // save old mouse coords
     double prev_x = mouse_input[X];
     double prev_y = mouse_input[Y];
+
+    // get new mouse coords
     glfwGetCursorPos(window, &mouse_input[X], &mouse_input[Y]);
+
+    // calculate how far mouse has moved since last frame
     mouse_input[DX] = mouse_input[X] - prev_x;
     mouse_input[DY] = prev_y - mouse_input[Y];
 }
@@ -183,7 +188,7 @@ void update(float dt)
     * Update Camera Angle
     ****************************************************************************************/
     // get forward and right vectors from view direction
-    glm::vec3 forward = glm::vec3(dir.x, 0.0f, dir.z);
+    glm::vec3 forward = glm::vec3(dir.x, 0.0f, dir.z); // TODO: normalize
     glm::vec3 right = glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f));
 
     // get delta pitch and yaw from mouse input
@@ -297,9 +302,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    // setup triangle data and shaders
     init();
-    update(0.0f);
+    update(0.0f); // does this need to be called?
 
     // main loop
     // float last = get_time();     // timing not implemented yet
