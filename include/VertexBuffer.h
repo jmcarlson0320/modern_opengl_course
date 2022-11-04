@@ -9,9 +9,9 @@ class VertexBuffer
 {
     public:
         VertexBuffer();
-        VertexBuffer(float *data, unsigned int num_elem);
         ~VertexBuffer();
 
+        void init(float *data, unsigned int num_elem);
         void bind();
         void unbind();
 

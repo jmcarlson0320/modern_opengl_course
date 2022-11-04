@@ -8,16 +8,16 @@ VertexBuffer::VertexBuffer()
     // using initializer lists
 }
 
-VertexBuffer::VertexBuffer(float *data, unsigned int num_elem)
+VertexBuffer::~VertexBuffer()
+{
+}
+
+void VertexBuffer::init(float *data, unsigned int num_elem)
 {
     glGenBuffers(1, &bufferID);
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     glBufferData(GL_ARRAY_BUFFER, num_elem * sizeof(float), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-VertexBuffer::~VertexBuffer()
-{
 }
 
 void VertexBuffer::bind()

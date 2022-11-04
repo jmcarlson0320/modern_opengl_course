@@ -20,6 +20,7 @@ class VertexArray
 
     private:
         GLuint vertexArrayID;
+        int indexCount;
 };
 
 #endif // VERTEXARRAY_H

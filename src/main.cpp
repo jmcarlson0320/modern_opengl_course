@@ -17,6 +17,7 @@
 #include "Material.h"
 #include "BufferLayout.h"
 #include "load_obj.h"
+#include "Mesh.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -32,6 +33,7 @@ Light *light;
 Material *shinyMaterial;
 Material *dullMaterial;
 
+Mesh *teapot_mesh;
 VertexBuffer *vertexBuffer;
 IndexBuffer *indexBuffer;
 VertexArray *vertexArray;
@@ -91,9 +93,13 @@ void init()
     * Load Model
     ****************************************************************************************/
     // load obj file contents into vertex buffer and index buffer
+    vertexBuffer = new VertexBuffer();
+    indexBuffer = new IndexBuffer();
+    vertexArray = new VertexArray();
+
     MeshData meshData = load_obj("resources/models/teapot.obj");
-    vertexBuffer = new VertexBuffer(meshData.vertices.data(), meshData.vertices.size());
-    indexBuffer = new IndexBuffer(meshData.indices.data(), meshData.indices.size());
+    vertexBuffer->init(meshData.vertices.data(), meshData.vertices.size());
+    indexBuffer->init(meshData.indices.data(), meshData.indices.size());
 
     // define the vertex layout
     BufferLayout layout;
@@ -102,7 +108,6 @@ void init()
     vertexBuffer->setLayout(layout);
 
     // assemble the vertex array object
-    vertexArray = new VertexArray();
     vertexArray->addVertexBuffer(vertexBuffer);
     vertexArray->addIndexBuffer(indexBuffer);
 
