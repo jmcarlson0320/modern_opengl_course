@@ -12,13 +12,14 @@ class Mesh {
 
         void loadObj(char *filename);
 
-        VertexArray getVertexArray();
-        IndexBuffer getIndexBuffer();
+        VertexBuffer *getVertexBuffer();
+        IndexBuffer *getIndexBuffer();
+        VertexArray *getVertexArray();
 
     private:
-        VertexBuffer vbo;
-        IndexBuffer ibo;
-        VertexArray vao;
+        VertexBuffer *vbo;
+        IndexBuffer *ibo;
+        VertexArray *vao;
 };
 
 #endif // MESH_H

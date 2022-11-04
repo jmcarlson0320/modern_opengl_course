@@ -5,33 +5,40 @@
 
 Mesh::Mesh()
 {
-
+    vbo = new VertexBuffer();
+    ibo = new IndexBuffer();
+    vao = new VertexArray();
 }
 
 void Mesh::loadObj(char *filename)
 {
     // load obj file contents into vertex buffer and index buffer
     MeshData meshData = load_obj("resources/models/teapot.obj");
-    vbo.init(meshData.vertices.data(), meshData.vertices.size());
-    ibo.init(meshData.indices.data(), meshData.indices.size());
+    vbo->init(meshData.vertices.data(), meshData.vertices.size());
+    ibo->init(meshData.indices.data(), meshData.indices.size());
 
     // define the vertex layout
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
     layout.addElem(FLOAT, 3); // normal
-    vbo.setLayout(layout);
+    vbo->setLayout(layout);
 
     // assemble the vertex array object
-    vao.addVertexBuffer(&vbo);
-    vao.addIndexBuffer(&ibo);
+    vao->addVertexBuffer(vbo);
+    vao->addIndexBuffer(ibo);
 }
 
-VertexArray Mesh::getVertexArray()
+VertexBuffer *Mesh::getVertexBuffer()
+{
+    return vbo;
+}
+
+VertexArray *Mesh::getVertexArray()
 {
     return vao;
 }
 
-IndexBuffer Mesh::getIndexBuffer()
+IndexBuffer *Mesh::getIndexBuffer()
 {
     return ibo;
 }

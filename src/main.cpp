@@ -33,10 +33,7 @@ Light *light;
 Material *shinyMaterial;
 Material *dullMaterial;
 
-Mesh *teapot_mesh;
-VertexBuffer *vertexBuffer;
-IndexBuffer *indexBuffer;
-VertexArray *vertexArray;
+Mesh *teapot;
 
 /*****************************************************************************************
 * User Input
@@ -92,28 +89,8 @@ void init()
     /*****************************************************************************************
     * Load Model
     ****************************************************************************************/
-    // load obj file contents into vertex buffer and index buffer
-    /*
-    teapot_mesh = new Mesh();
-    teapot_mesh->loadObj("resources/models/teapot.obj");
-    */
-    vertexBuffer = new VertexBuffer();
-    indexBuffer = new IndexBuffer();
-    vertexArray = new VertexArray();
-
-    MeshData meshData = load_obj("resources/models/teapot.obj");
-    vertexBuffer->init(meshData.vertices.data(), meshData.vertices.size());
-    indexBuffer->init(meshData.indices.data(), meshData.indices.size());
-
-    // define the vertex layout
-    BufferLayout layout;
-    layout.addElem(FLOAT, 3); // position
-    layout.addElem(FLOAT, 3); // normal
-    vertexBuffer->setLayout(layout);
-
-    // assemble the vertex array object
-    vertexArray->addVertexBuffer(vertexBuffer);
-    vertexArray->addIndexBuffer(indexBuffer);
+    teapot = new Mesh();
+    teapot->loadObj("resources/models/teapot.obj");
 
     /*****************************************************************************************
     * Load Shaders
@@ -264,14 +241,8 @@ void display()
     /*****************************************************************************************
     * Draw Model
     ****************************************************************************************/
-    /*
-    teapot_mesh->getVertexArray().bind();
-    std::cout << "index count: " << teapot_mesh->getIndexBuffer().getIndexCount();
-    glDrawElements(GL_TRIANGLES, teapot_mesh->getIndexBuffer().getIndexCount(), GL_UNSIGNED_INT, 0);
-    */
-
-    vertexArray->bind();
-    glDrawElements(GL_TRIANGLES, indexBuffer->getIndexCount(), GL_UNSIGNED_INT, 0);
+    teapot->getVertexArray()->bind();
+    glDrawElements(GL_TRIANGLES, teapot->getIndexBuffer()->getIndexCount(), GL_UNSIGNED_INT, 0);
 }
 
 // glfw code in here
@@ -317,6 +288,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+
+
+
     init();
     update(0.0f); // does this need to be called?
 
@@ -331,6 +305,7 @@ int main(int argc, char *argv[])
         handleInput(window);
         update(dt);
         display();
+
 
         glfwSwapBuffers(window);
 
