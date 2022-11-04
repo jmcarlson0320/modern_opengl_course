@@ -93,6 +93,10 @@ void init()
     * Load Model
     ****************************************************************************************/
     // load obj file contents into vertex buffer and index buffer
+    /*
+    teapot_mesh = new Mesh();
+    teapot_mesh->loadObj("resources/models/teapot.obj");
+    */
     vertexBuffer = new VertexBuffer();
     indexBuffer = new IndexBuffer();
     vertexArray = new VertexArray();
@@ -260,6 +264,12 @@ void display()
     /*****************************************************************************************
     * Draw Model
     ****************************************************************************************/
+    /*
+    teapot_mesh->getVertexArray().bind();
+    std::cout << "index count: " << teapot_mesh->getIndexBuffer().getIndexCount();
+    glDrawElements(GL_TRIANGLES, teapot_mesh->getIndexBuffer().getIndexCount(), GL_UNSIGNED_INT, 0);
+    */
+
     vertexArray->bind();
     glDrawElements(GL_TRIANGLES, indexBuffer->getIndexCount(), GL_UNSIGNED_INT, 0);
 }
