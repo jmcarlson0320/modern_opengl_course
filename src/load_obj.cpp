@@ -37,21 +37,32 @@ MeshData load_obj(const char *filename)
 
     MeshData meshData;
 
-    // interleave positions and normals
-    // create meshdata vertex array
-    for (int i = 0; i < attrib.vertices.size(); i += 3) {
-        meshData.vertices.push_back(attrib.vertices[i]);
-        meshData.vertices.push_back(attrib.vertices[i + 1]);
-        meshData.vertices.push_back(attrib.vertices[i + 2]);
-        meshData.vertices.push_back(attrib.normals[i]);
-        meshData.vertices.push_back(attrib.normals[i + 1]);
-        meshData.vertices.push_back(attrib.normals[i + 2]);
-    }
-
     // create meshdata index array
+    int index_count = 0;
     for (int s = 0; s < shapes.size(); s++) {
+        std::cout << "number of indices: " << shapes[s].mesh.indices.size() << std::endl;
         for (int i = 0; i < shapes[s].mesh.indices.size(); i++) {
-            meshData.indices.push_back(shapes[s].mesh.indices[i].vertex_index);
+            auto idx = shapes[s].mesh.indices[i];
+            auto v = idx.vertex_index;
+            meshData.vertices.push_back(attrib.vertices[v]);
+            meshData.vertices.push_back(attrib.vertices[v + 1]);
+            meshData.vertices.push_back(attrib.vertices[v + 2]);
+
+            auto n = idx.normal_index;
+            if (n >= 0) {
+                meshData.vertices.push_back(attrib.normals[n]);
+                meshData.vertices.push_back(attrib.normals[n + 1]);
+                meshData.vertices.push_back(attrib.normals[n + 2]);
+            }
+
+            auto t = idx.texcoord_index;
+            if (t >= 0) {
+                meshData.vertices.push_back(attrib.texcoords[t]);
+                meshData.vertices.push_back(attrib.texcoords[t + 1]);
+            }
+
+            meshData.indices.push_back(index_count);
+            index_count++;
         }
     }
 
