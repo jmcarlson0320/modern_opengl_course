@@ -33,6 +33,7 @@ Light *light;
 Material *shinyMaterial;
 Material *dullMaterial;
 
+/* node */
 Mesh *teapot;
 
 /*****************************************************************************************
@@ -87,10 +88,10 @@ void init()
 //    glDebugMessageCallback(MessageCallback, 0);
 
     /*****************************************************************************************
-    * Load Model
+    * Load Mesh
     ****************************************************************************************/
     teapot = new Mesh();
-    teapot->loadObj("resources/models/teapot.obj");
+    teapot->loadObj("resources/models/LibertStatue.obj");
 
     /*****************************************************************************************
     * Load Shaders
@@ -287,9 +288,6 @@ int main(int argc, char *argv[])
         glfwTerminate();
         exit(1);
     }
-
-
-
 
     init();
     update(0.0f); // does this need to be called?

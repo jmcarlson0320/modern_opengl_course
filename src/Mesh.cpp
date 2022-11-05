@@ -13,7 +13,7 @@ Mesh::Mesh()
 void Mesh::loadObj(char *filename)
 {
     // load obj file contents into vertex buffer and index buffer
-    MeshData meshData = load_obj("resources/models/teapot.obj");
+    MeshData meshData = load_obj(filename);
     vbo->init(meshData.vertices.data(), meshData.vertices.size());
     ibo->init(meshData.indices.data(), meshData.indices.size());
 
