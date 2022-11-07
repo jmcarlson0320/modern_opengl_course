@@ -91,7 +91,7 @@ void init()
     * Load Mesh
     ****************************************************************************************/
     teapot = new Mesh();
-    teapot->loadObj("resources/models/LibertStatue.obj");
+    teapot->loadObj("resources/models/libertStatue.obj");
 
     /*****************************************************************************************
     * Load Shaders

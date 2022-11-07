@@ -35,30 +35,26 @@ MeshData load_obj(const char *filename)
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
 
+    auto& vertex_data = attrib.vertices;
+    auto& normal_data = attrib.normals;
+
     MeshData meshData;
 
-    // create meshdata index array
     int index_count = 0;
     for (int s = 0; s < shapes.size(); s++) {
-        std::cout << "number of indices: " << shapes[s].mesh.indices.size() << std::endl;
-        for (int i = 0; i < shapes[s].mesh.indices.size(); i++) {
-            auto idx = shapes[s].mesh.indices[i];
-            auto v = idx.vertex_index;
-            meshData.vertices.push_back(attrib.vertices[v]);
-            meshData.vertices.push_back(attrib.vertices[v + 1]);
-            meshData.vertices.push_back(attrib.vertices[v + 2]);
+        auto &shape_data = shapes[s].mesh.indices;
+        for (int i = 0; i < shape_data.size(); i++) {
+            auto idx = shape_data[i];
+            int v = idx.vertex_index;
+            meshData.vertices.push_back(vertex_data[3 * v + 0]);
+            meshData.vertices.push_back(vertex_data[3 * v + 1]);
+            meshData.vertices.push_back(vertex_data[3 * v + 2]);
 
-            auto n = idx.normal_index;
+            int n = idx.normal_index;
             if (n >= 0) {
-                meshData.vertices.push_back(attrib.normals[n]);
-                meshData.vertices.push_back(attrib.normals[n + 1]);
-                meshData.vertices.push_back(attrib.normals[n + 2]);
-            }
-
-            auto t = idx.texcoord_index;
-            if (t >= 0) {
-                meshData.vertices.push_back(attrib.texcoords[t]);
-                meshData.vertices.push_back(attrib.texcoords[t + 1]);
+                meshData.vertices.push_back(normal_data[3 * n + 0]);
+                meshData.vertices.push_back(normal_data[3 * n + 1]);
+                meshData.vertices.push_back(normal_data[3 * n + 2]);
             }
 
             meshData.indices.push_back(index_count);

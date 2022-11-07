@@ -21,7 +21,6 @@ void Mesh::loadObj(char *filename)
     BufferLayout layout;
     layout.addElem(FLOAT, 3); // position
     layout.addElem(FLOAT, 3); // normal
-    layout.addElem(FLOAT, 2); // texture coordinate
     vbo->setLayout(layout);
 
     // assemble the vertex array object
