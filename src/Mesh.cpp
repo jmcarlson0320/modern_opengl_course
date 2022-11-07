@@ -18,10 +18,7 @@ void Mesh::loadObj(char *filename)
     ibo->init(meshData.indices.data(), meshData.indices.size());
 
     // define the vertex layout
-    BufferLayout layout;
-    layout.addElem(FLOAT, 3); // position
-    layout.addElem(FLOAT, 3); // normal
-    vbo->setLayout(layout);
+    vbo->setLayout(meshData.layout);
 
     // assemble the vertex array object
     vao->addVertexBuffer(vbo);

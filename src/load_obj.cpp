@@ -40,6 +40,10 @@ MeshData load_obj(const char *filename)
 
     MeshData meshData;
 
+    meshData.layout.addElem(FLOAT, 3);      // position
+    if (normal_data.size() > 0)
+        meshData.layout.addElem(FLOAT, 3);  // normal
+
     int index_count = 0;
     for (int s = 0; s < shapes.size(); s++) {
         auto &shape_data = shapes[s].mesh.indices;
