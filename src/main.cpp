@@ -91,7 +91,7 @@ void init()
     * Load Mesh
     ****************************************************************************************/
     teapot = new Mesh();
-    teapot->loadObj("resources/models/libertStatue.obj");
+    teapot->loadObj("resources/models/untitled.obj");
 
     /*****************************************************************************************
     * Load Shaders
@@ -225,6 +225,7 @@ void display()
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
 
     // view
     glm::mat4 view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));
