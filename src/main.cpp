@@ -16,7 +16,6 @@
 #include "Light.h"
 #include "Material.h"
 #include "BufferLayout.h"
-#include "load_obj.h"
 #include "Mesh.h"
 
 #define WIDTH 1280
@@ -91,7 +90,7 @@ void init()
     * Load Mesh
     ****************************************************************************************/
     teapot = new Mesh();
-    teapot->loadObj("resources/models/untitled.obj");
+    teapot->loadObj("resources/models/LibertStatue.obj");
 
     /*****************************************************************************************
     * Load Shaders
@@ -225,7 +224,7 @@ void display()
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
     model = glm::rotate(model, TO_RADIANS(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
+    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
 
     // view
     glm::mat4 view = glm::lookAt(eye, eye + dir, glm::vec3(0.0f, 1.0f, 0.0f));

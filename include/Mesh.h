@@ -5,6 +5,12 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+typedef struct MeshData {
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+    BufferLayout layout;
+} MeshData;
+
 class Mesh {
     public:
         Mesh();
@@ -17,6 +23,7 @@ class Mesh {
         VertexArray *getVertexArray();
 
     private:
+        MeshData meshData;
         VertexBuffer *vbo;
         IndexBuffer *ibo;
         VertexArray *vao;

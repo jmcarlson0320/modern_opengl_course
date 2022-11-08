@@ -37,12 +37,17 @@ MeshData load_obj(const char *filename)
 
     auto& vertex_data = attrib.vertices;
     auto& normal_data = attrib.normals;
+    auto& texture_data = attrib.texcoords;
 
     MeshData meshData;
 
     meshData.layout.addElem(FLOAT, 3);      // position
     if (normal_data.size() > 0)
         meshData.layout.addElem(FLOAT, 3);  // normal
+        /*
+    if (texture_data.size() > 0)
+        meshData.layout.addElem(FLOAT, 2);  // texcoord
+        */
 
     int index_count = 0;
     for (int s = 0; s < shapes.size(); s++) {
@@ -60,6 +65,14 @@ MeshData load_obj(const char *filename)
                 meshData.vertices.push_back(normal_data[3 * n + 1]);
                 meshData.vertices.push_back(normal_data[3 * n + 2]);
             }
+
+/*
+            int t = idx.texcoord_index;
+            if (t >= 0) {
+                meshData.vertices.push_back(texture_data[2 * t + 0]);
+                meshData.vertices.push_back(texture_data[2 * t + 1]);
+            }
+            */
 
             meshData.indices.push_back(index_count);
             index_count++;
