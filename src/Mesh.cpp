@@ -1,5 +1,3 @@
-#ifndef NO_COMPILE
-
 #include "Mesh.h"
 #include "load_obj.h"
 
@@ -39,5 +37,3 @@ IndexBuffer *Mesh::getIndexBuffer()
 {
     return ibo;
 }
-
-#endif // NO_COMPILE
