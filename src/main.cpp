@@ -17,6 +17,7 @@
 #include "Material.h"
 #include "BufferLayout.h"
 #include "Mesh.h"
+#include "Input.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -34,39 +35,6 @@ Material *dullMaterial;
 
 /* node */
 Mesh *teapot;
-
-/*****************************************************************************************
-* User Input
-****************************************************************************************/
-enum KEYBOARD_INPUTS {
-    FORWARD,
-    BACK,
-    LEFT,
-    RIGHT,
-    QUIT,
-    NUM_KEYBOARD_INPUTS
-};
-
-enum MOUSE_INPUTS {
-    X,
-    Y,
-    DX,
-    DY,
-    NUM_MOUSE_INPUTS
-};
-
-int KEY_MAP[NUM_KEYBOARD_INPUTS] = {
-    [FORWARD] = GLFW_KEY_W,
-    [BACK] = GLFW_KEY_S,
-    [LEFT] = GLFW_KEY_A,
-    [RIGHT] = GLFW_KEY_D,
-    [QUIT] = GLFW_KEY_Q
-};
-
-bool keyboard_input[NUM_KEYBOARD_INPUTS] = {0};
-double mouse_input[NUM_MOUSE_INPUTS] = {0.0f};
-
-void handleInput(GLFWwindow *window);
 
 /*****************************************************************************************
 * Camera
@@ -113,7 +81,7 @@ void init()
     /*****************************************************************************************
     * Init Materials
     ****************************************************************************************/
-    shinyMaterial = new Material(1.0f, 32);
+    shinyMaterial = new Material(1.0f, 64);
     dullMaterial = new Material(0.3f, 4);
 
     /*****************************************************************************************
@@ -130,12 +98,16 @@ void init()
     * Set Uniforms for Light and Material
     ****************************************************************************************/
     simpleShader->use();
+    // global
     simpleShader->setUniformFloat("ambientIntensity", light->ambient_amount);
     simpleShader->setUniformVec3("lightColor", light->color);
     simpleShader->setUniformFloat("lightIntensity", light->intensity);
     simpleShader->setUniformVec3("lightPosition", light->position);
-    simpleShader->setUniformFloat("material.specular_intensity", shinyMaterial->specular_intensity);
-    simpleShader->setUniformFloat("material.shininess", shinyMaterial->shininess);
+    simpleShader->setUniformVec3("eye", eye);
+
+    // per object
+    simpleShader->setUniformFloat("specular_intensity", shinyMaterial->specular_intensity);
+    simpleShader->setUniformFloat("shininess", shinyMaterial->shininess);
 
     /*****************************************************************************************
     * Set Background Color
@@ -146,26 +118,6 @@ void init()
     * Enable Depth Test
     ****************************************************************************************/
     glEnable(GL_DEPTH_TEST);
-}
-
-void handleInput(GLFWwindow *window)
-{
-    glfwPollEvents();
-
-    for (int i = 0; i < NUM_KEYBOARD_INPUTS; i++) {
-        keyboard_input[i] = (glfwGetKey(window, KEY_MAP[i]) == GLFW_PRESS);
-    }
-
-    // save old mouse coords
-    double prev_x = mouse_input[X];
-    double prev_y = mouse_input[Y];
-
-    // get new mouse coords
-    glfwGetCursorPos(window, &mouse_input[X], &mouse_input[Y]);
-
-    // calculate how far mouse has moved since last frame
-    mouse_input[DX] = mouse_input[X] - prev_x;
-    mouse_input[DY] = prev_y - mouse_input[Y];
 }
 
 void update(float dt)
@@ -208,7 +160,7 @@ void update(float dt)
     }
     
     /*****************************************************************************************
-    * Rotate the scene
+    * Rotate the object
     ****************************************************************************************/
     angle += d_angle;
 }
@@ -238,6 +190,9 @@ void display()
     simpleShader->setUniformMat4("model", model);
     simpleShader->setUniformMat4("view", view);
     simpleShader->setUniformMat4("projection", projection);
+    
+
+    simpleShader->setUniformVec3("eye", eye);
 
     /*****************************************************************************************
     * Draw Model
@@ -282,7 +237,7 @@ int main(int argc, char *argv[])
 
     // init glew
     glewExperimental = GL_TRUE;
-    if(glewInit() != GLEW_OK) {
+    if (glewInit() != GLEW_OK) {
         printf("could not init glew\n");
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -295,7 +250,7 @@ int main(int argc, char *argv[])
     // main loop
     // float last = get_time();     // timing not implemented yet
     float last = 0.0f;
-    while(!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window)) {
         // float cur = get_time();
         float cur = 0.0f;
         float dt = cur - last;

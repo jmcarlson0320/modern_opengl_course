@@ -15,7 +15,8 @@ uniform mat4 projection;
 void main()
 {
     gl_Position = projection * view * model * vec4(pos, 1.0f);
+
+    frag_pos = (model * vec4(pos, 1.0f)).xyz;
     vertex_normal = mat3(transpose(inverse(model))) * normal;
     vertex_texture_coor = tex_coor;
-    frag_pos = (model * vec4(pos, 1.0f)).xyz;
 }

@@ -18,6 +18,7 @@ class Mesh {
 
         void loadObj(char *filename);
 
+        MeshData *getMeshData();
         VertexBuffer *getVertexBuffer();
         IndexBuffer *getIndexBuffer();
         VertexArray *getVertexArray();

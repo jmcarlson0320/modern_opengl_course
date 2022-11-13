@@ -7,10 +7,10 @@ class Material {
     public:
         Material();
         Material(GLfloat specular_intensity, GLfloat shininess);
-
-        void UseMaterial(GLuint spec_intensity_location, GLuint shininess_location);
-
         ~Material();
+
+        void init(GLfloat specular_intensity, GLfloat shininess);
+        void UseMaterial(GLuint spec_intensity_location, GLuint shininess_location);
 
         GLfloat specular_intensity;
         GLfloat shininess;
